@@ -1,4 +1,4 @@
-package app.Model;
+package app.Repo;
 
 public class MessageRepository {
   

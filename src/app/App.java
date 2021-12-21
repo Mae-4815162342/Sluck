@@ -5,10 +5,12 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 public class App implements Callable<Boolean> {
   private AsynchronousServerSocketChannel server;
+	private ArrayList<AsynchronousSocketChannel> clients = new ArrayList<AsynchronousSocketChannel>();
 
 	@Override
 	public Boolean call() throws Exception {
@@ -21,6 +23,7 @@ public class App implements Callable<Boolean> {
 				server.accept(null, this);
 				try{
 					System.out.println("A client is connected from " + client.getRemoteAddress());
+					clients.add(client);
 				} catch (Exception e) {
 					failed(e, null);
 				}
@@ -34,14 +37,22 @@ public class App implements Callable<Boolean> {
 						System.out.println("J'ai reçu " + response);
 
 						// Code ici...
-
-						if(response.equals("exit")){
-							client.write(ByteBuffer.wrap("Bye !".getBytes())).get();
-							System.out.println("A client is disconnected from " + client.getRemoteAddress());
-							break;
+						if(response.equals("liste")){
+							String res = "";
+							for(int i = 0; i<clients.size(); i++){
+								res += clients.get(i).getRemoteAddress() + ", ";
+							}
+							client.write(ByteBuffer.wrap(res.getBytes())).get();
 						}
 						else{
-							client.write(ByteBuffer.wrap(response.getBytes())).get();
+							if(response.equals("exit")){
+								client.write(ByteBuffer.wrap("Bye !".getBytes())).get();
+								System.out.println("A client is disconnected from " + client.getRemoteAddress());
+								break;
+							}
+							else{
+								client.write(ByteBuffer.wrap(response.getBytes())).get();
+							}
 						}
 					}
 				} catch (Exception e) {
