@@ -2,10 +2,8 @@ CREATE TABLE IF NOT EXISTS User
 (
     uuid       INT PRIMARY KEY NOT NULL AUTO_INCREMENT ,
     username  VARCHAR(50) NOT NULL,
-    email      VARCHAR(100) NOT NULL,
     password   VARCHAR(250) NOT NULL,
     UNIQUE(uuid),
-    UNIQUE(email)
 );
 CREATE TABLE IF NOT EXISTS Channel
 (
@@ -17,9 +15,11 @@ CREATE TABLE IF NOT EXISTS Channel
 );
 CREATE TABLE IF NOT EXISTS Message
 (
+    muid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     text       VARCHAR(140) NOT NULL,
     userId  INT NOT NULL,
     channelId    INT NOT NULL,
+    UNIQUE(muid),
     FOREIGN(userId) REFERENCES User(uuid),
     FOREIGN(channelId) references Channel(cuid)
 );
