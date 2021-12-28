@@ -1,12 +1,20 @@
-package app.Repo;
+package app.Repository;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-public static class UserRepository {
+import app.Model.User;
+import app.utils.PasswordEncoder;
+
+public class UserRepository {
   
   private static Connection con;
 
-  private UserRepository(){
+  private UserRepository() throws Exception{
     try{
       con = DriverManager.getConnection(
         "jdbc:mysql://gcvfvf8qih2d.eu-west-3.psdb.cloud/sluck?sslMode=VERIFY_IDENTITY",
@@ -15,31 +23,39 @@ public static class UserRepository {
       throw e;
     }
   }
-  public static User findByUsernameAndPassword(String username, String password){
-    MessageDigest md = MessageDigest.getInstance("MD5");
-    md.update(password.getBytes());
-    String pwd = DatatypeConverter.printHexBinary(md.digest()).toUpperCase();
-
-    Statement stmt = con.createStatement();
-    ResultSet res = stmt.executeQuery("select * from User where username='"+ username + "' and password='"+ pwd +"'");
-
-    if(!res){
-      throw new Exception("Could not login into account");
+  public User findByUsernameAndPassword(String username, String password) throws Exception{
+    try{
+      Statement stmt = con.createStatement();
+      ResultSet res = stmt.executeQuery("select * from User where username='"+ username + "' and password='"+ PasswordEncoder.encode(password) +"'");
+  
+      if(res== null){
+        throw new Exception("Could not login into account");
+      }
+  
+      User user = new User();
+      user.setPassword(res.getString("password"));
+      user.setUsername(res.getString("username"));
+      user.setUuid(res.getString("uuid"));
+      return user;
+    } catch(SQLException e){
+      throw e;
+    } catch (NoSuchAlgorithmException e){
+      throw e;
     }
-
-    User user = new User();
-    user.setPassword(res.getString("password")).setUsername(res.getString("username")).setUuid(res.getString("uuid"));
-
-    return user;
-
   }
 
-  public static User insert(User user) {
-
-
-    Statement stmt = con.createStatement();
-    ResultSet res = stmt.executeUpdate("INSERT INTO User VALUES ('"+user.getUuid()+"','"+user.getUsername()+"','"+pwd+"')");
-
-    return user;
+  public User insert(User user) throws NoSuchAlgorithmException, SQLException {
+    try{
+      Statement stmt = con.createStatement();
+      stmt.executeUpdate("INSERT INTO User VALUES ('"+user.getUuid()+"','"+user.getUsername()+"','"+PasswordEncoder.encode(user.getPassword())+"')");
+  
+      return user;
+    }
+    catch(SQLException e){
+      throw e;
+    }
+    catch(NoSuchAlgorithmException e ){
+      throw e;
+    }
   }
 }

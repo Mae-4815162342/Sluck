@@ -9,10 +9,10 @@ public class User {
     }
 
     public String getUuid() {
-        return $uuid;
+        return uuid;
     }
     public void setUuid(String $uuid) {
-        this.$uuid = $uuid;
+        this.uuid = $uuid;
     }
 
     public void setUsername(String username) {

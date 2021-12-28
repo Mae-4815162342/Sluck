@@ -1,7 +1,9 @@
 package app.Service;
 
-import client.User;
+import java.util.UUID;
 
+import app.Model.User;
+import app.Repository.UserRepository;
 public class AuthenticationService {
   private UserRepository UserRepository;
 
@@ -9,33 +11,31 @@ public class AuthenticationService {
     this.UserRepository = UserRepository;
   }
 
-  public User signin(Request request){
+  public User signin(Request request) throws Exception{
     String username;
     String password;
     if(username=="" || password==""){
       throw new Exception("Inputs can not be empty");
     }
     try{
-      User user = UserRepository.findByUsernameAndPassword(username, password);
+      app.Model.User user = UserRepository.findByUsernameAndPassword(username, password);
 
       return user;
     } catch (Exception e){
       throw new Exception("Could not authenticate user");
     }
   }
-  public User signup(Request request){
+  public User signup(Request request) throws Exception{
     String username;
     String password;
     if(username=="" || password==""){
       throw new Exception("Inputs can not be empty");
     }
     try{
-      MessageDigest md = MessageDigest.getInstance("MD5");
-      md.update(password.getBytes());
-      String pwd = DatatypeConverter.printHexBinary(md.digest()).toUpperCase();
-
       User user = new User();
-      user.setPassword(pwd).setUsernamne(username).setUuid(UUID.randomUUID());
+      user.setPassword(password);
+      user.setUsername(username);
+      user.setUuid(UUID.randomUUID().toString());
 
       UserRepository.insert(user);
 
