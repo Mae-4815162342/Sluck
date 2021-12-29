@@ -23,7 +23,7 @@ public class UserRepository {
       throw e;
     }
   }
-  public User findByUsernameAndPassword(String username, String password) throws Exception{
+  public User findByUsernameAndPassword(String username, String password) throws SQLException, NoSuchAlgorithmException, Exception{
     try{
       Statement stmt = con.createStatement();
       ResultSet res = stmt.executeQuery("select * from User where username='"+ username + "' and password='"+ PasswordEncoder.encode(password) +"'");
@@ -35,7 +35,27 @@ public class UserRepository {
       User user = new User();
       user.setPassword(res.getString("password"));
       user.setUsername(res.getString("username"));
-      user.setUuid(res.getString("uuid"));
+      user.setUuid(res.getInt("uuid"));
+      return user;
+    } catch(SQLException e){
+      throw e;
+    } catch (NoSuchAlgorithmException e){
+      throw e;
+    }
+  }
+  public User findById(int id) throws SQLException, NoSuchAlgorithmException, Exception{
+    try{
+      Statement stmt = con.createStatement();
+      ResultSet res = stmt.executeQuery("select * from User where uuid='"+ id + "'");
+  
+      if(res== null){
+        throw new Exception("Could not login into account");
+      }
+  
+      User user = new User();
+      user.setPassword(res.getString("password"));
+      user.setUsername(res.getString("username"));
+      user.setUuid(res.getInt("uuid"));
       return user;
     } catch(SQLException e){
       throw e;

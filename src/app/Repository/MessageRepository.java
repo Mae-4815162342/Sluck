@@ -1,11 +1,17 @@
 package app.Repository;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
+import app.Model.Channel;
 import app.Model.Message;
+import app.Model.User;
 
 public class MessageRepository {
   private static Connection con;
@@ -29,5 +35,21 @@ public class MessageRepository {
     catch(SQLException e){
       throw e; 
     }
+  }
+  public List<Message> findByChannelId(int cuid, Channel channel, UserRepository UserRepository) throws SQLException, NoSuchAlgorithmException, Exception{
+    List<Message> messages = new ArrayList<Message>();
+    try{
+      Statement stmt = con.createStatement();
+      ResultSet res = stmt.executeQuery("select * from Message where userId=" + cuid);
+      while(res.next()){
+        Message m = new Message(res.getInt("muid"),null, res.getString("text"));
+        User user = UserRepository.findById(res.getInt("userId"));
+        m.setUser(user);
+      }
+    }
+    catch(SQLException e){
+      throw e;
+    }
+    return messages;
   }
 }

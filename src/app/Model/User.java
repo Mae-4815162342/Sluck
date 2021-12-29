@@ -1,18 +1,18 @@
 package app.Model;
 
 public class User {
-    private String uuid = null;
+    private int uuid = 0;
     private String username;
     private String password;
 
     public User(){
     }
 
-    public String getUuid() {
+    public int getUuid() {
         return uuid;
     }
-    public void setUuid(String $uuid) {
-        this.uuid = $uuid;
+    public void setUuid(int uuid) {
+        this.uuid = uuid;
     }
 
     public void setUsername(String username) {

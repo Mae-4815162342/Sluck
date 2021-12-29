@@ -1,12 +1,13 @@
 package app.Model;
 
 public class Message {
-    private String muid;
+    private int muid;
     private String message;
     private User user;
     private Channel channel;
 
-    public Message(User user, String message){
+    public Message(int muid,User user, String message){
+        this.muid = muid; 
         this.user = user;
         this.message = message;
     }
@@ -15,11 +16,11 @@ public class Message {
         return user;
     }
 
-    public String getMuid() {
+    public int getMuid() {
         return muid;
     }
 
-    public void setMuid(String muid) {
+    public void setMuid(int muid) {
         this.muid = muid;
     }
 

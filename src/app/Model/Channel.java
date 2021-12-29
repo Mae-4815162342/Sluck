@@ -5,12 +5,13 @@ import java.util.List;
 
 public class Channel {
     private String name;
-    private String cuid;
+    private int cuid;
     private List<Message> messages;
     private List<User> users;
     private User admin;
 
-    public Channel(String name, User user){
+    public Channel(String name, User user, int cuid){
+        this.cuid = cuid;
         this.name = name;
         this.admin = user;
         this.messages = new ArrayList<Message>();
@@ -26,11 +27,11 @@ public class Channel {
         this.name = name;
     }
 
-    public String getCuid() {
+    public int getCuid() {
         return cuid;
     }
 
-    public void setCuid(String cuid) {
+    public void setCuid(int cuid) {
         this.cuid = cuid;
     }
 
