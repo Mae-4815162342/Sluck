@@ -1,5 +1,4 @@
 package app;
-
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousServerSocketChannel;
@@ -35,14 +34,15 @@ public class App implements Callable<Boolean> {
 						System.out.println("Taille du buffer : " + buffer.position());
 						String response = new String(buffer.flip().array()).trim();
 						System.out.println("J'ai reçu " + response);
-
 						// Code ici...
 						if(response.equals("liste")){
 							String res = "";
 							for(int i = 0; i<clients.size(); i++){
 								res += clients.get(i).getRemoteAddress() + ", ";
 							}
-							client.write(ByteBuffer.wrap(res.getBytes())).get();
+							for(AsynchronousSocketChannel cli : clients){
+								cli.write(ByteBuffer.wrap(res.getBytes())).get();
+							}
 						}
 						else{
 							if(response.equals("exit")){
