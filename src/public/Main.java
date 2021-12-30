@@ -2,6 +2,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,6 +20,21 @@ public class Main {
           socket.read(buffer).get();
           String response = new String(buffer.flip().array()).trim();
           System.out.println("J'ai reçu " + response);
+        }
+      });
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+        public void run() {
+            try {
+                Thread.sleep(200);
+                socket.write(ByteBuffer.wrap("exit".getBytes())).get();
+                //some cleaning up code...
+  
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+              e.printStackTrace();
+            }
         }
       });
       while(!line.equals("Bye !")){

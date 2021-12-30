@@ -35,7 +35,7 @@ public class AuthenticationService {
       User user = new User();
       user.setPassword(password);
       user.setUsername(username);
-      user.setUuid(UUID.randomUUID().toString());
+      user.setUuid((int) UUID.randomUUID());
 
       UserRepository.insert(user);
 

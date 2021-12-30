@@ -5,11 +5,12 @@ import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 public class App implements Callable<Boolean> {
   private AsynchronousServerSocketChannel server;
-	private ArrayList<AsynchronousSocketChannel> clients = new ArrayList<AsynchronousSocketChannel>();
+	private List<AsynchronousSocketChannel> clients = new ArrayList<AsynchronousSocketChannel>();
 
 	@Override
 	public Boolean call() throws Exception {
@@ -34,7 +35,7 @@ public class App implements Callable<Boolean> {
 						System.out.println("Taille du buffer : " + buffer.position());
 						String response = new String(buffer.flip().array()).trim();
 						System.out.println("J'ai reçu " + response);
-						// Code ici...
+
 						if(response.equals("liste")){
 							String res = "";
 							for(int i = 0; i<clients.size(); i++){
@@ -46,8 +47,9 @@ public class App implements Callable<Boolean> {
 						}
 						else{
 							if(response.equals("exit")){
-								client.write(ByteBuffer.wrap("Bye !".getBytes())).get();
+								//client.write(ByteBuffer.wrap("Bye !".getBytes())).get();
 								System.out.println("A client is disconnected from " + client.getRemoteAddress());
+								clients.remove(client);
 								break;
 							}
 							else{
