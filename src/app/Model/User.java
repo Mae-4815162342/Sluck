@@ -1,17 +1,19 @@
 package app.Model;
 
+import java.util.UUID;
+
 public class User {
-    private int uuid = 0;
+    private UUID uuid;
     private String username;
     private String password;
 
     public User(){
     }
 
-    public int getUuid() {
+    public UUID getUuid() {
         return uuid;
     }
-    public void setUuid(int uuid) {
+    public void setUuid(UUID uuid) {
         this.uuid = uuid;
     }
 

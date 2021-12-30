@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.UUID;
 
 import app.Model.User;
 import app.utils.PasswordEncoder;
@@ -35,7 +36,7 @@ public class UserRepository {
       User user = new User();
       user.setPassword(res.getString("password"));
       user.setUsername(res.getString("username"));
-      user.setUuid(res.getInt("uuid"));
+      user.setUuid(UUID.fromString(res.getString("uuid")));
       return user;
     } catch(SQLException e){
       throw e;
