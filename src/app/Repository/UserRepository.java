@@ -17,10 +17,11 @@ public class UserRepository {
   public UserRepository() throws Exception{
     
     try{
-      Class.forName("com.mysql.cj.jdbc.Driver");
+      /* Class.forName("com.mysql.cj.jdbc.Driver");
       con = DriverManager.getConnection(
       "jdbc:mysql://gcvfvf8qih2d.eu-west-3.psdb.cloud/sluck?sslMode=VERIFY_IDENTITY",
-      "757ay5tq0evt", "pscale_pw_l7vrHo-NIPMnCZwgFHxUA2YL8JIBghq4739iGfoF8us");
+      "757ay5tq0evt", "pscale_pw_l7vrHo-NIPMnCZwgFHxUA2YL8JIBghq4739iGfoF8us"); */
+      con = null;
     } catch (Exception e) {
       throw e;
     }
