@@ -2,21 +2,28 @@ package app.Model;
 
 import java.io.Serializable;
 
-public class Response implements Serializable {
-  private int ID;
+public class Response implements Serializable{
+  public Type type;
+  private boolean sendToAll; 
   private Object obj;
 
-  public Response(int iD, Object obj) {
-    ID = iD;
-    this.obj = obj;
+
+  public Response() {
   }
 
-  public int getID() {
-    return ID;
+  public boolean isSendToAll() {
+    return sendToAll;
   }
 
-  public void setID(int iD) {
-    ID = iD;
+  public void setSendToAll(boolean sendToAll) {
+    this.sendToAll = sendToAll;
+  }
+  public Type getType() {
+    return type;
+  }
+
+  public void setType(Type type) {
+    this.type = type;
   }
 
   public Object getObj() {
@@ -26,5 +33,4 @@ public class Response implements Serializable {
   public void setObj(Object obj) {
     this.obj = obj;
   }
-  
 }
