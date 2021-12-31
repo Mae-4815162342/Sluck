@@ -15,7 +15,7 @@ public class UserRepository {
   
   private static Connection con;
 
-  private UserRepository() throws Exception{
+  public UserRepository() throws Exception{
     try{
       con = DriverManager.getConnection(
         "jdbc:mysql://gcvfvf8qih2d.eu-west-3.psdb.cloud/sluck?sslMode=VERIFY_IDENTITY",
