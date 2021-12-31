@@ -19,8 +19,8 @@ public class UserRepository {
     try{
       Class.forName("com.mysql.cj.jdbc.Driver");
       con = DriverManager.getConnection(
-        "jdbc:mysql://gcvfvf8qih2d.eu-west-3.psdb.cloud/sluck?sslMode=false",
-        "2q9gnpn4n7hg", "pscale_pw_C3xqPzPNtDRmaLiM5-fIR2sd5gzlv0u12MpZjboGVnE");
+      "jdbc:mysql://gcvfvf8qih2d.eu-west-3.psdb.cloud/sluck?sslMode=VERIFY_IDENTITY",
+      "757ay5tq0evt", "pscale_pw_l7vrHo-NIPMnCZwgFHxUA2YL8JIBghq4739iGfoF8us");
     } catch (Exception e) {
       throw e;
     }
