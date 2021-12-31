@@ -2,7 +2,6 @@ package app.Service;
 
 import java.nio.channels.AsynchronousSocketChannel;
 import java.sql.SQLException;
-import java.util.UUID;
 
 import app.Model.Request;
 import app.Model.Response;
@@ -45,9 +44,8 @@ public class AuthenticationService implements ServiceInterface {
       User user = new User();
       user.setPassword(password);
       user.setUsername(username);
-      user.setUuid(UUID.randomUUID());
 
-      UserRepository.insert(user);
+      user = UserRepository.insert(user);
 
       return user;
     } catch (Exception e){

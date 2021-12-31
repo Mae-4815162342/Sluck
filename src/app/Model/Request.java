@@ -14,7 +14,7 @@ public class Request implements Serializable {
     return type;
   }
 
-  public void setID(Type type) {
+  public void setType(Type type) {
     this.type = type;
   }
 

@@ -24,12 +24,43 @@ public class SerializationUtils {
 		}
 		catch(IOException e){throw e;}
 	}
+	public static byte[] serializeRequest(Request request) throws IOException{
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutputStream out = null;
+		try{
+			out = new ObjectOutputStream(bos);
+			out.writeObject(request);
+			out.flush();
+			byte[] res = bos.toByteArray();
+			System.out.println(res.length);
+			return res;
+		}
+		catch(IOException e){throw e;}
+	}
   public static Request deserializeRequest(byte[] bytes) throws ClassNotFoundException, IOException{
 		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
     ObjectInput in = null;
 		try {
 			in = new ObjectInputStream(bis);
 			Request l = (Request) in.readObject(); 
+			return l;
+		}  
+		finally{
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException e) {
+				throw e;
+			}
+		} 
+	}
+	public static Response deserializeResponse(byte[] bytes) throws ClassNotFoundException, IOException{
+		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+    ObjectInput in = null;
+		try {
+			in = new ObjectInputStream(bis);
+			Response l = (Response) in.readObject(); 
 			return l;
 		}  
 		finally{

@@ -1,6 +1,6 @@
 package app.Model;
 
-public enum Type{
+public enum Type {
   OK,
   ERROR,
   SIGNIN,
@@ -10,5 +10,6 @@ public enum Type{
   GET_CHANNELS,
   GET_USERS,
   SEND_MESSAGES,
-  EXIT
+  EXIT,
+  ANY
 }

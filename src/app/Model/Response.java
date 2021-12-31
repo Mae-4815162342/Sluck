@@ -3,12 +3,22 @@ package app.Model;
 import java.io.Serializable;
 
 public class Response implements Serializable{
-  public Type type;
+  private Type status;
+  private Type type;
   private boolean sendToAll; 
   private Object obj;
 
 
   public Response() {
+    sendToAll = false;
+  }
+
+  public Type getStatus() {
+    return status;
+  }
+
+  public void setStatus(Type status) {
+    this.status = status;
   }
 
   public boolean isSendToAll() {

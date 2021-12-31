@@ -6,7 +6,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.UUID;
 
 import app.Model.User;
 import app.utils.PasswordEncoder;
@@ -16,10 +15,12 @@ public class UserRepository {
   private static Connection con;
 
   public UserRepository() throws Exception{
+    
     try{
+      Class.forName("com.mysql.cj.jdbc.Driver");
       con = DriverManager.getConnection(
-        "jdbc:mysql://gcvfvf8qih2d.eu-west-3.psdb.cloud/sluck?sslMode=VERIFY_IDENTITY",
-        "yjmapqwhjf98", "pscale_pw_jg21Ifi5su45CMObtvAYeh_oMnN_vDa6BxSugcBuxdA");
+        "jdbc:mysql://gcvfvf8qih2d.eu-west-3.psdb.cloud/sluck?sslMode=false",
+        "2q9gnpn4n7hg", "pscale_pw_C3xqPzPNtDRmaLiM5-fIR2sd5gzlv0u12MpZjboGVnE");
     } catch (Exception e) {
       throw e;
     }
@@ -36,7 +37,7 @@ public class UserRepository {
       User user = new User();
       user.setPassword(res.getString("password"));
       user.setUsername(res.getString("username"));
-      user.setUuid(UUID.fromString(res.getString("uuid")));
+      user.setUuid(res.getInt("uuid"));
       return user;
     } catch(SQLException e){
       throw e;

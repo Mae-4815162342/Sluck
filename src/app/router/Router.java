@@ -1,5 +1,6 @@
 package app.router;
 
+import java.io.IOException;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,10 +29,12 @@ public class Router {
     MessagingService message = new MessagingService();
     services.put(Type.SEND_MESSAGES,message);
     services.put(Type.GET_USERS,message);
+    services.put(Type.ANY,message);
   }
   
-  public void run(Request req, Response res, AsynchronousSocketChannel client){
-    ServiceInterface action = services.get(req.getType());
-    action.run(req, res, client);
+  public void run(Request req, Response res, AsynchronousSocketChannel client) 
+    throws IOException{
+      ServiceInterface action = services.get(req.getType());
+      action.run(req, res, client);
   }
 }

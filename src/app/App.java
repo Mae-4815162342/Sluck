@@ -24,41 +24,10 @@ public class App implements Callable<Boolean> {
 	public static List<AsynchronousSocketChannel> clients = new ArrayList<AsynchronousSocketChannel>();
 	public static Map<AsynchronousSocketChannel, User> users = new HashMap<AsynchronousSocketChannel, User>();
 	private Router router;
-
 	public App() throws Exception{
 			router = new Router();
 	}
-	@Override
-	public Boolean call() throws Exception {
-		server = AsynchronousServerSocketChannel.open();
-		server.bind(new InetSocketAddress("localhost", 1237));
-		server.accept(null, new CompletionHandler<AsynchronousSocketChannel, Object>() {
-
-			@Override
-			public void completed(AsynchronousSocketChannel client, Object attachment) {
-				server.accept(null, this);
-				try{
-					System.out.println("Un client s'est connecté depuis " + client.getRemoteAddress());
-					clients.add(client);
-				} catch (Exception e) {
-					failed(e, null);
-				}
-				try {
-					handleResponse(client);
-				} catch (Exception e) {
-					failed(e, null);
-				}
-			}
-
-			@Override
-			public void failed(Throwable exc, Object attachment) {
-				exc.printStackTrace();
-			}
-		});
-		System.in.read();
-		return true;
-	}
-	public void handleResponse(AsynchronousSocketChannel client) throws Exception{
+	public void waitForRequest(AsynchronousSocketChannel client) throws Exception{
 		while(true){
 			ByteBuffer buffer = ByteBuffer.allocate(1024);
 			client.read(buffer).get();
@@ -106,6 +75,36 @@ public class App implements Callable<Boolean> {
 	}
 	public void sendToOneClient(Response res, AsynchronousSocketChannel client) throws IOException, InterruptedException, ExecutionException{
 		client.write(ByteBuffer.wrap(SerializationUtils.serializeResponse(res))).get();
+	}
+	@Override
+	public Boolean call() throws Exception {
+		server = AsynchronousServerSocketChannel.open();
+		server.bind(new InetSocketAddress("localhost", 1237));
+		server.accept(null, new CompletionHandler<AsynchronousSocketChannel, Object>() {
+
+			@Override
+			public void completed(AsynchronousSocketChannel client, Object attachment) {
+				server.accept(null, this);
+				try{
+					System.out.println("Un client s'est connecté depuis " + client.getRemoteAddress());
+					clients.add(client);
+				} catch (Exception e) {
+					failed(e, null);
+				}
+				try {
+					waitForRequest(client);
+				} catch (Exception e) {
+					failed(e, null);
+				}
+			}
+
+			@Override
+			public void failed(Throwable exc, Object attachment) {
+				exc.printStackTrace();
+			}
+		});
+		System.in.read();
+		return true;
 	}
 	public static void main(String[] args) throws Exception {
 		new App().call();
