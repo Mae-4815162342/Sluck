@@ -1,10 +1,13 @@
 package app.Service;
 
+import java.io.IOException;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.sql.SQLException;
 
+import app.App;
 import app.Model.Request;
 import app.Model.Response;
+import app.Model.Type;
 import app.Model.User;
 import app.Repository.UserRepository;
 import app.Service.Interface.ServiceInterface;
@@ -52,11 +55,19 @@ public class AuthenticationService implements ServiceInterface {
       throw new Exception("Could not authenticate user");
     }
   }
-
+  public void exit(AsynchronousSocketChannel client) throws IOException{
+    App.clients.remove(client);
+    System.out.println("Clients restants :");
+    for(AsynchronousSocketChannel cli : App.clients){
+      System.out.println(cli.getLocalAddress());
+    }
+  }
   @Override
-  public void run(Request req, Response res, AsynchronousSocketChannel client) {
-    // TODO Auto-generated method stub
-
-
+  public void run(Request req, Response res, AsynchronousSocketChannel client) throws IOException {
+    Type type = req.getType();
+    if(type.equals(Type.EXIT)){
+      System.out.println("Un client s'est déconnecté depuis " + client.getLocalAddress());
+      exit(client);
+    }
   }
 }

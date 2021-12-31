@@ -21,6 +21,7 @@ public class Router {
     services.put(Type.SIGNIN,auth);
     services.put(Type.SIGNUP, auth);
     services.put(Type.SIGNOUT, auth);
+    services.put(Type.EXIT, auth);
 
     ChannelService channel = new ChannelService();
     services.put(Type.GET_CHANNELS,channel);

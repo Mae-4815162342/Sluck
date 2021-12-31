@@ -18,7 +18,7 @@ public class MessagingService implements ServiceInterface {
     res.setStatus(Type.OK);
     List<String> list = new ArrayList<String>();
     for(AsynchronousSocketChannel cli : App.clients){
-      list.add(cli.getLocalAddress().toString());
+      list.add(cli.getRemoteAddress().toString());
     }
     Liste l = new Liste(list);
     res.setObj(l);
@@ -27,17 +27,20 @@ public class MessagingService implements ServiceInterface {
   }
   public void echoMessage(Request req, Response res) throws IOException{
     res.setStatus(Type.OK);   
-    res.setObj("Le server a bien reçu : " + req.getParams().get("message"));
+    String resp = "Le server a bien reçu : " + req.getParams().get("message");
+    res.setObj(resp);
+    res.setType(Type.ANY);   
   }
   @Override
   public void run(Request req, Response res, AsynchronousSocketChannel client) 
     throws IOException {
     Type type = req.getType();
-    System.out.println("Sheesh, début MessagingService");
     if(type.equals(Type.GET_USERS)){
+      System.out.println("On va filer à tout le monde la liste des clients !");
       getAllUsers(req, res);
     }
-    if(type.equals(Type.GET_USERS)){
+    if(type.equals(Type.ANY)){
+      System.out.println("On va lui renvoyer son message !");
       echoMessage(req, res);
     }
   }

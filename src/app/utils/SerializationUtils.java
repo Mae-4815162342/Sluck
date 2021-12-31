@@ -19,7 +19,6 @@ public class SerializationUtils {
 			out.writeObject(response);
 			out.flush();
 			byte[] res = bos.toByteArray();
-			System.out.println(res.length);
 			return res;
 		}
 		catch(IOException e){throw e;}
@@ -32,7 +31,6 @@ public class SerializationUtils {
 			out.writeObject(request);
 			out.flush();
 			byte[] res = bos.toByteArray();
-			System.out.println(res.length);
 			return res;
 		}
 		catch(IOException e){throw e;}

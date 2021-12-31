@@ -37,6 +37,7 @@ public class Main {
     switch(line){
       case "liste":
         req.setType(Type.GET_USERS);
+        break;
       default:
         req.setType(Type.ANY);
         params.put("message", line);
@@ -49,9 +50,6 @@ public class Main {
       while(!line.equals("Bye !")){
         line = scanner.nextLine();
         Request req = outputParser(line);
-        Request reqBis = SerializationUtils.deserializeRequest(SerializationUtils.serializeRequest(req));
-        System.out.println("Force Reading : " + req.getParams().get("message"));
-        System.out.println("Force Reading : " + (String) reqBis.getParams().get("message"));
         socket.write(ByteBuffer.wrap(SerializationUtils.serializeRequest(req))).get();
       }
     sendDisconnectRequest(socket);
@@ -63,8 +61,9 @@ public class Main {
       if(response.getStatus().equals(Type.OK)){
         switch(response.getType()){
           case ANY:
+            System.out.println("On a reçu un écho");
             String echoMessage = (String) response.getObj();
-            System.out.print(echoMessage);
+            System.out.println(echoMessage);
             break;
           case CREATE_CHANNEL:
             break;
@@ -95,7 +94,7 @@ public class Main {
   public void sendDisconnectRequest(AsynchronousSocketChannel socket) throws 
     InterruptedException, ExecutionException, IOException{
       Request req = new Request();
-      req.setType(Type.SIGNOUT);
+      req.setType(Type.EXIT);
       req.setParams(null);
       socket.write(ByteBuffer.wrap(SerializationUtils.serializeRequest(req))).get();
   }
