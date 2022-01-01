@@ -2,29 +2,20 @@ package app.Repository;
 
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import app.Model.User;
+import app.Repository.Interface.RepositoryInterface;
 import app.utils.PasswordEncoder;
 
-public class UserRepository {
+public class UserRepository extends RepositoryInterface {
   
   private static Connection con;
 
-  public UserRepository() throws Exception{
-    
-    try{
-      /* Class.forName("com.mysql.cj.jdbc.Driver");
-      con = DriverManager.getConnection(
-      "jdbc:mysql://gcvfvf8qih2d.eu-west-3.psdb.cloud/sluck?sslMode=VERIFY_IDENTITY",
-      "r29yq8cim0hr", "pscale_pw_4HBD30cCvDZB54mf-H3ESoo3NrCr3n670yxGz28I_VI"); */
-      con = null;
-    } catch (Exception e) {
-      throw e;
-    }
+  public UserRepository() throws ClassNotFoundException, SQLException {
+    super();
   }
   public User findByUsernameAndPassword(String username, String password) throws SQLException, NoSuchAlgorithmException, Exception{
     try{

@@ -15,7 +15,6 @@ import java.util.concurrent.ExecutionException;
 
 import app.Model.Request;
 import app.Model.Response;
-import app.Model.Type;
 import app.Model.User;
 import app.router.Router;
 import app.utils.SerializationUtils;

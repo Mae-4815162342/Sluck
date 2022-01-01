@@ -2,7 +2,6 @@ package app.Repository;
 
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,20 +11,13 @@ import java.util.List;
 import app.Model.Channel;
 import app.Model.Message;
 import app.Model.User;
+import app.Repository.Interface.RepositoryInterface;
 
-public class MessageRepository {
+public class MessageRepository extends RepositoryInterface{
   private static Connection con;
 
-  private MessageRepository() throws Exception{
-    try{
-     /* Class.forName("com.mysql.cj.jdbc.Driver");
-      con = DriverManager.getConnection(
-      "jdbc:mysql://gcvfvf8qih2d.eu-west-3.psdb.cloud/sluck?sslMode=VERIFY_IDENTITY",
-      "r29yq8cim0hr", "pscale_pw_4HBD30cCvDZB54mf-H3ESoo3NrCr3n670yxGz28I_VI"); */
-      con = null;
-    } catch (Exception e) {
-      throw e;
-    }
+  private MessageRepository() throws ClassNotFoundException, SQLException {
+    super();
   }
   public Message insert (Message message) throws SQLException{
     try{

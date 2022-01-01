@@ -4,25 +4,17 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import app.Model.Channel;
+import app.Repository.Interface.RepositoryInterface;
 
-public class ChannelRepository {
+public class ChannelRepository extends RepositoryInterface{
   private static Connection con;
 
-  public ChannelRepository() throws Exception{
-    try{
-      /* Class.forName("com.mysql.cj.jdbc.Driver");
-      con = DriverManager.getConnection(
-      "jdbc:mysql://gcvfvf8qih2d.eu-west-3.psdb.cloud/sluck?sslMode=VERIFY_IDENTITY",
-      "r29yq8cim0hr", "pscale_pw_4HBD30cCvDZB54mf-H3ESoo3NrCr3n670yxGz28I_VI"); */
-      con = null;
-    } catch (Exception e) {
-      throw e;
-    }
+  public ChannelRepository() throws SQLException, ClassNotFoundException{
+    super();
   }
   public Channel insert (String name, int adminUuid) throws SQLException{
     try{
