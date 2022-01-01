@@ -1,22 +1,16 @@
 package app.Model;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
-public class Channel {
+public class Channel implements Serializable{
     private String name;
     private int cuid;
+    private int adminUuid;
     private List<Message> messages;
-    private List<User> users;
     private User admin;
 
-    public Channel(String name, User user, int cuid){
-        this.cuid = cuid;
-        this.name = name;
-        this.admin = user;
-        this.messages = new ArrayList<Message>();
-        this.users = new ArrayList<User>();
-        this.users.add(admin);
+    public Channel(){
     }
     
     public String getName() {
@@ -34,17 +28,15 @@ public class Channel {
     public void setCuid(int cuid) {
         this.cuid = cuid;
     }
+    public int getAdminUuid() {
+        return adminUuid;
+    }
 
+    public void setAdminUuid(int adminUuid) {
+        this.adminUuid = adminUuid;
+    }
     public void setMessages(List<Message> messages) {
         this.messages = messages;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
     }
 
     public void setAdmin(User admin) {
@@ -55,10 +47,6 @@ public class Channel {
         return admin;
     }
 
-    public List<User> getListOfUsers(){
-        return users;
-    }
-    
     public List<Message> getMessages(){
         return messages;
     }

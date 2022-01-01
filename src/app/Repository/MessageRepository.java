@@ -18,9 +18,11 @@ public class MessageRepository {
 
   private MessageRepository() throws Exception{
     try{
+     /* Class.forName("com.mysql.cj.jdbc.Driver");
       con = DriverManager.getConnection(
-        "jdbc:mysql://gcvfvf8qih2d.eu-west-3.psdb.cloud/sluck?sslMode=VERIFY_IDENTITY",
-        "yjmapqwhjf98", "pscale_pw_jg21Ifi5su45CMObtvAYeh_oMnN_vDa6BxSugcBuxdA");
+      "jdbc:mysql://gcvfvf8qih2d.eu-west-3.psdb.cloud/sluck?sslMode=VERIFY_IDENTITY",
+      "r29yq8cim0hr", "pscale_pw_4HBD30cCvDZB54mf-H3ESoo3NrCr3n670yxGz28I_VI"); */
+      con = null;
     } catch (Exception e) {
       throw e;
     }

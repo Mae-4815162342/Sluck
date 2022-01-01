@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 
 import app.Model.Request;
 import app.Model.Response;
+import app.Model.Type;
 import app.Model.User;
 import app.router.Router;
 import app.utils.SerializationUtils;
@@ -27,12 +29,8 @@ public class App implements Callable<Boolean> {
 	public App() throws Exception{
 			router = new Router();
 	}
-	public void waitForRequest(AsynchronousSocketChannel client) throws Exception{
-		while(true){
-			ByteBuffer buffer = ByteBuffer.allocate(1024);
-			client.read(buffer).get();
-			Request req = SerializationUtils.deserializeRequest(buffer.flip().array());
-			Response res = new Response();
+	public void handleRequest(Request req, Response res, AsynchronousSocketChannel client) throws 
+		InterruptedException, ExecutionException, IOException, SQLException{
 			router.run(req, res, client);
 			if(res.isSendToAll()){
 				sendToAll(res);
@@ -40,7 +38,16 @@ public class App implements Callable<Boolean> {
 			else{
 				sendToOneClient(res, client);
 			}
-			/* String response = new String(buffer.flip().array()).trim();
+	}
+	public void waitForRequest(AsynchronousSocketChannel client) throws 
+		InterruptedException, ExecutionException, IOException, SQLException, ClassNotFoundException{
+			while(true&&clients.contains(client)){
+				ByteBuffer buffer = ByteBuffer.allocate(1024);
+				client.read(buffer).get();
+				Request req = SerializationUtils.deserializeRequest(buffer.flip().array());
+				Response res = new Response();
+				handleRequest(req, res, client);
+				/* String response = new String(buffer.flip().array()).trim();
 
 			if(response.equals("liste")){
 				Liste liste = createListe(clients);
@@ -69,6 +76,7 @@ public class App implements Callable<Boolean> {
 		}
 	}
 	public void sendToAll(Response res) throws InterruptedException, ExecutionException, IOException{
+		// Faire sur la liste de users à la place
 		for(AsynchronousSocketChannel cli : clients){
 			cli.write(ByteBuffer.wrap(SerializationUtils.serializeResponse(res))).get();
 		}

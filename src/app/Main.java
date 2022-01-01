@@ -36,6 +36,7 @@ public class Main {
     Map<String, String> params = new HashMap<String, String>();
     switch(line){
       case "liste":
+        System.out.println("On veut les users");
         req.setType(Type.GET_USERS);
         break;
       default:
@@ -70,15 +71,18 @@ public class Main {
           case ERROR:
             break;
           case EXIT:
+            String disconnectedUser = (String) response.getObj();
+            System.out.println("Le user " + disconnectedUser + " a quitté le serveur");
             break;
           case GET_CHANNELS:
             break;
           case GET_USERS:
+            System.out.println("On a recu la liste suivant :");
             Liste l = (Liste) response.getObj();
             System.out.print(l.toString());
           case OK:
             break;
-          case SEND_MESSAGES:
+          case CREATE_MESSAGE:
             break;
           case SIGNIN:
             break;

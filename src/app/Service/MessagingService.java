@@ -31,17 +31,23 @@ public class MessagingService implements ServiceInterface {
     res.setObj(resp);
     res.setType(Type.ANY);   
   }
-  @Override
   public void run(Request req, Response res, AsynchronousSocketChannel client) 
     throws IOException {
-    Type type = req.getType();
-    if(type.equals(Type.GET_USERS)){
-      System.out.println("On va filer à tout le monde la liste des clients !");
-      getAllUsers(req, res);
-    }
-    if(type.equals(Type.ANY)){
-      System.out.println("On va lui renvoyer son message !");
-      echoMessage(req, res);
-    }
+      switch(req.getType()){
+        case ANY:
+          System.out.println("On va lui renvoyer son message !");
+          echoMessage(req, res);
+          break;
+        case CREATE_MESSAGE:
+          break;
+        case GET_MESSAGES:
+          break;
+        case GET_USERS:
+          System.out.println("On va filer à tout le monde la liste des clients !");
+          getAllUsers(req, res);
+          break;
+        default:
+          break;
+      }
   }
 }

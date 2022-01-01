@@ -2,6 +2,7 @@ package app.router;
 
 import java.io.IOException;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +20,6 @@ public class Router {
     services = new HashMap<Type, ServiceInterface>();
     AuthenticationService auth = new AuthenticationService();
     services.put(Type.SIGNIN,auth);
-    services.put(Type.SIGNUP, auth);
     services.put(Type.SIGNOUT, auth);
     services.put(Type.EXIT, auth);
 
@@ -28,13 +28,14 @@ public class Router {
     services.put(Type.CREATE_CHANNEL, channel);
 
     MessagingService message = new MessagingService();
-    services.put(Type.SEND_MESSAGES,message);
     services.put(Type.GET_USERS,message);
+    services.put(Type.GET_MESSAGES,message);
+    services.put(Type.CREATE_MESSAGE,message);
     services.put(Type.ANY,message);
   }
   
   public void run(Request req, Response res, AsynchronousSocketChannel client) 
-    throws IOException{
+    throws IOException, SQLException{
       ServiceInterface action = services.get(req.getType());
       action.run(req, res, client);
   }

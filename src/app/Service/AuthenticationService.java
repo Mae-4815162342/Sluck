@@ -23,9 +23,9 @@ public class AuthenticationService implements ServiceInterface {
     }
   }
 
-  public User signin(Request request) throws Exception{
-    String username = request.getParams().get("username");
-    String password = request.getParams().get("password");
+  public User signin(Request req) throws Exception{
+    String username = req.getParams().get("username");
+    String password = req.getParams().get("password");
     if(username=="" || password==""){
       throw new Exception("Inputs can not be empty");
     }
@@ -37,9 +37,9 @@ public class AuthenticationService implements ServiceInterface {
       throw new Exception("Could not authenticate user");
     }
   }
-  public User signup(Request request) throws Exception{
-    String username = request.getParams().get("username");
-    String password = request.getParams().get("password");
+  public User signup(Request req) throws Exception{
+    String username = req.getParams().get("username");
+    String password = req.getParams().get("password");
     if(username=="" || password==""){
       throw new Exception("Inputs can not be empty");
     }
@@ -55,19 +55,32 @@ public class AuthenticationService implements ServiceInterface {
       throw new Exception("Could not authenticate user");
     }
   }
-  public void exit(AsynchronousSocketChannel client) throws IOException{
+  public void exit(Request req, Response res, AsynchronousSocketChannel client) throws IOException{
     App.clients.remove(client);
     System.out.println("Clients restants :");
     for(AsynchronousSocketChannel cli : App.clients){
-      System.out.println(cli.getLocalAddress());
+      System.out.println(cli.getRemoteAddress());
     }
+    res.setStatus(Type.OK);
+    res.setType(req.getType());
+    res.setSendToAll(true);
+    res.setObj(client.getRemoteAddress().toString());
   }
-  @Override
   public void run(Request req, Response res, AsynchronousSocketChannel client) throws IOException {
-    Type type = req.getType();
-    if(type.equals(Type.EXIT)){
-      System.out.println("Un client s'est déconnecté depuis " + client.getLocalAddress());
-      exit(client);
+    switch(req.getType()){
+      case SIGNIN:
+        break;
+      case SIGNUP:
+        break;
+      case SIGNOUT:
+        System.out.println("Un user a quitté sa session depuis " + client.getRemoteAddress());
+      break;
+      case EXIT:
+        System.out.println("Un client s'est déconnecté depuis " + client.getRemoteAddress());
+        exit(req, res, client);
+        break;
+      default:
+        break;
     }
   }
 }
