@@ -104,6 +104,7 @@ public class Main {
     sendDisconnectRequest(socket);
     scanner.close();
   }
+  @SuppressWarnings("unchecked")
   public void handleResponse(ByteBuffer buffer) throws 
     ClassNotFoundException, IOException{
       Response response = SerializationUtils.deserializeResponse(buffer.flip().array());
