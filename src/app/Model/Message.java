@@ -9,7 +9,6 @@ public class Message implements Serializable{
     private int cuid;
 
     public Message(){
-
     }
 
     public int getUuid(){
