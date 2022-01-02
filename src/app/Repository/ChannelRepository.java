@@ -11,19 +11,21 @@ import app.Model.Channel;
 import app.Repository.Interface.RepositoryInterface;
 
 public class ChannelRepository extends RepositoryInterface{
-  private static Connection con;
 
-  public ChannelRepository() throws SQLException, ClassNotFoundException{
-    super();
+  public ChannelRepository(Connection con) throws SQLException, ClassNotFoundException{
+    super(con);
   }
   public Channel insert (String name, int adminUuid) throws SQLException{
     try{
       Statement stmt = con.createStatement();
-      ResultSet res = stmt.executeQuery("INSERT INTO Channel (name,admin) OUTPUT VALUES ('"+name+"','"+adminUuid+"'); Select max(cuid) from Channel ");
+      stmt.executeUpdate("INSERT INTO Channel (name,admin) VALUES ('"+name+"','"+adminUuid+"')");
+      ResultSet res = stmt.executeQuery("Select max(cuid) from Channel");
       Channel channel = new Channel();
-      channel.setAdminUuid(adminUuid);
-      channel.setCuid(res.getInt("MAX(cuid)"));
-      channel.setName(name);
+      if(res.next()){
+        channel.setAdminUuid(adminUuid);
+        channel.setCuid(res.getInt("MAX(cuid)"));
+        channel.setName(name);
+      }
       return channel;
     }
     catch(SQLException e){

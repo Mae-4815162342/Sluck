@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +30,8 @@ public class App implements Callable<Boolean> {
 			router = new Router();
 	}
 	public void handleRequest(Request req, Response res, AsynchronousSocketChannel client) throws 
-		InterruptedException, ExecutionException, IOException, SQLException{
+		InterruptedException, ExecutionException, IOException, SQLException, NoSuchAlgorithmException{
+			res.setType(req.getType());
 			router.run(req, res, client);
 			if(res.isSendToAll()){
 				sendToAll(res);
@@ -39,44 +41,19 @@ public class App implements Callable<Boolean> {
 			}
 	}
 	public void waitForRequest(AsynchronousSocketChannel client) throws 
-		InterruptedException, ExecutionException, IOException, SQLException, ClassNotFoundException{
+		InterruptedException, ExecutionException, IOException, SQLException, ClassNotFoundException, NoSuchAlgorithmException{
 			while(true&&clients.contains(client)){
 				ByteBuffer buffer = ByteBuffer.allocate(1024);
 				client.read(buffer).get();
 				Request req = SerializationUtils.deserializeRequest(buffer.flip().array());
 				Response res = new Response();
 				handleRequest(req, res, client);
-				/* String response = new String(buffer.flip().array()).trim();
-
-			if(response.equals("liste")){
-				Liste liste = createListe(clients);
-				//byte [] listeByte = serializeListe(liste);
-				Response resp = new Response();
-				byte [] listeByte = serializeResponse(resp);
-				/* Liste listeBis = deserializeListe(listeByte);
-				System.out.println(listeBis.toString());
-				for(AsynchronousSocketChannel cli : clients){
-					cli.write(ByteBuffer.wrap(listeByte)).get();
-				}
-			}
-			else{
-				if(response.equals("exit")){
-					//client.write(ByteBuffer.wrap("Bye !".getBytes())).get();
-					System.out.println("Un client s'est déconnecté depuis " + client.getRemoteAddress());
-					clients.remove(client);
-					break;
-				}
-				else{
-					Response resp = new Response();
-					byte [] listeByte = serializeResponse(resp);
-					client.write(ByteBuffer.wrap(listeByte)).get();
-				} 
-			}	*/
 		}
 	}
 	public void sendToAll(Response res) throws InterruptedException, ExecutionException, IOException{
 		// Faire sur la liste de users à la place
-		for(AsynchronousSocketChannel cli : clients){
+    for (Map.Entry<AsynchronousSocketChannel, User> entry : App.users.entrySet()) {
+			AsynchronousSocketChannel cli = entry.getKey();
 			cli.write(ByteBuffer.wrap(SerializationUtils.serializeResponse(res))).get();
 		}
 	}

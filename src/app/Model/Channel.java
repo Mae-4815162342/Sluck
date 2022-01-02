@@ -47,7 +47,10 @@ public class Channel implements Serializable{
         return admin;
     }
 
-    public List<Message> getMessages(){
+    public List<Message> getMessages(){     
         return messages;
+    }
+    public String toString(){
+        return "CUID : " + cuid + ", adminID : "+ adminUuid +", #" + name;
     }
 }

@@ -1,19 +1,19 @@
 package app.Model;
 
-public class Message {
+import java.io.Serializable;
+
+public class Message implements Serializable{
     private int muid;
     private String message;
-    private User user;
-    private Channel channel;
+    private int uuid;
+    private int cuid;
 
-    public Message(int muid,User user, String message){
-        this.muid = muid; 
-        this.user = user;
-        this.message = message;
+    public Message(){
+
     }
 
-    public User getUser(){
-        return user;
+    public int getUuid(){
+        return uuid;
     }
 
     public int getMuid() {
@@ -28,20 +28,23 @@ public class Message {
         return message;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUuid(int uuid) {
+        this.uuid = uuid;
     }
 
-    public Channel getChannel() {
-        return channel;
+    public int getCuid() {
+        return cuid;
     }
 
-    public void setChannel(Channel channel) {
-        this.channel = channel;
+    public void setCuid(int cuid) {
+        this.cuid = cuid;
     }
 
     //pour modifier un message
     public void setMessage(String message){
         this.message = message;
+    }
+    public String toString(){
+        return "From : "+uuid + " in " + cuid + ", " + message;
     }
 }

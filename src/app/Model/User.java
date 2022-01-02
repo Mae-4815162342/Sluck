@@ -1,6 +1,8 @@
 package app.Model;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     private int uuid;
     private String username;
     private String password;
@@ -27,6 +29,8 @@ public class User {
         this.password = password;
     }
 
-
     public String getUsername(){return username;}
+    public String toString(){
+        return "UUID : " + uuid + ", Username : " + username;
+    }
 }

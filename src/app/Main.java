@@ -4,17 +4,22 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import app.Model.Channel;
 import app.Model.Liste;
+import app.Model.Message;
 import app.Model.Request;
 import app.Model.Response;
 import app.Model.Type;
+import app.Model.User;
 import app.utils.SerializationUtils;
 
 public class Main {
@@ -34,15 +39,58 @@ public class Main {
   public Request outputParser(String line){
     Request req = new Request();
     Map<String, String> params = new HashMap<String, String>();
-    switch(line){
-      case "liste":
+    String[] command = line.split(" ");
+    switch(command[0]){
+      case "signin":
+        System.out.println("On veut se connecter au serveur !");
+        req.setType(Type.SIGNIN);
+        params.put("username", command[1]);
+        params.put("password", command[2]);
+        req.setParams(params);
+        break;
+      case "signup":
+        System.out.println("On veut s'inscrire au serveur !");
+        req.setType(Type.SIGNUP);
+        params.put("username", command[1]);
+        params.put("password", command[2]);
+        req.setParams(params);
+        break;
+      case "signout":
+        System.out.println("On veut se déconnecter du serveur !");
+        req.setType(Type.SIGNOUT);
+        break;
+      case "create_channel":
+        System.out.println("On veut créer un channel !");
+        req.setType(Type.CREATE_CHANNEL);
+        params.put("name", command[1]);
+        params.put("admin", command[2]);     
+        req.setParams(params);
+        break; 
+      case "create_message":
+        System.out.println("On veut envoyer un message !");
+        req.setType(Type.CREATE_MESSAGE);
+        params.put("message", String.join(" ",Arrays.copyOfRange(command, 3, command.length)));
+        params.put("cuid", command[1]);     
+        params.put("uuid", command[2]);     
+        req.setParams(params);
+        break;   
+      case "get_channels":
+        System.out.println("On veut les channels");
+        req.setType(Type.GET_CHANNELS);
+        break;
+      case "get_messages":
+        System.out.println("On veut les messages");
+        req.setType(Type.GET_MESSAGES);
+      break;
+      case "get_users":
         System.out.println("On veut les users");
         req.setType(Type.GET_USERS);
         break;
       default:
         req.setType(Type.ANY);
-        params.put("message", line);
+        params.put("message", String.join(" ", command));
         req.setParams(params);
+        break;
     }
     return req;
   }
@@ -67,28 +115,47 @@ public class Main {
             System.out.println(echoMessage);
             break;
           case CREATE_CHANNEL:
-            break;
-          case ERROR:
-            break;
-          case EXIT:
-            String disconnectedUser = (String) response.getObj();
-            System.out.println("Le user " + disconnectedUser + " a quitté le serveur");
+            Channel newChannel = (Channel) response.getObj();
+            System.out.println("Un nouveau channel a été créé ! " + newChannel.toString());
             break;
           case GET_CHANNELS:
+            System.out.println("On a recu la liste des channels :");
+            List<Channel> channels = (List<Channel>) response.getObj();
+            for(Channel chan : channels){
+              System.out.println(chan.toString());
+            }
             break;
           case GET_USERS:
-            System.out.println("On a recu la liste suivant :");
-            Liste l = (Liste) response.getObj();
-            System.out.print(l.toString());
-          case OK:
+            System.out.println("Users connectés :");
+            List<User> users = (List<User>) response.getObj();
+            for(User user : users){
+              System.out.println(user.toString());
+            }
             break;
           case CREATE_MESSAGE:
+            System.out.println("On a recu un nouveau message :");
+            Message message = (Message) response.getObj();
+            System.out.println(message.toString());
+            break;
+          case GET_MESSAGES:
+            System.out.println("On a recu la liste des messages :");
+            List<Message> messages = (List<Message>) response.getObj();
+            for(Message mess : messages){
+              System.out.println(mess.toString());
+            }
             break;
           case SIGNIN:
+            System.out.println("Trouvé !");
+            User user = (User) response.getObj();
+            System.out.println("Salut " + user.getUsername() + " !");
             break;
           case SIGNOUT:
+            User disconnectedUser = (User) response.getObj();
+            System.out.println("Bye " + disconnectedUser.getUsername() + " !");
             break;
           case SIGNUP:
+            User newUser = (User) response.getObj();
+            System.out.println("Bienvenue " + newUser.getUsername() + " !");
             break;
           default:
             break; 

@@ -12,22 +12,18 @@ import app.utils.PasswordEncoder;
 
 public class UserRepository extends RepositoryInterface {
   
-  private static Connection con;
-
-  public UserRepository() throws ClassNotFoundException, SQLException {
-    super();
+  public UserRepository(Connection con) throws ClassNotFoundException, SQLException {
+    super(con);
   }
-  public User findByUsernameAndPassword(String username, String password) throws SQLException, NoSuchAlgorithmException, Exception{
+  public User findByUsernameAndPassword(String username, String password) throws SQLException, NoSuchAlgorithmException {
     try{
       Statement stmt = con.createStatement();
       ResultSet res = stmt.executeQuery("select * from User where username='"+ username + "' and password='"+ PasswordEncoder.encode(password) +"'");
   
-      if(res== null){
-        throw new Exception("Could not login into account");
+      if(!res.next()){
+        return null;
       }
-  
       User user = new User();
-      user.setPassword(res.getString("password"));
       user.setUsername(res.getString("username"));
       user.setUuid(res.getInt("uuid"));
       return user;
@@ -37,33 +33,23 @@ public class UserRepository extends RepositoryInterface {
       throw e;
     }
   }
-  public User findById(int id) throws SQLException, NoSuchAlgorithmException, Exception{
+  public User insert(String username, String password) throws SQLException, NoSuchAlgorithmException {
     try{
       Statement stmt = con.createStatement();
-      ResultSet res = stmt.executeQuery("select * from User where uuid='"+ id + "'");
-  
-      if(res== null){
-        throw new Exception("Could not login into account");
+      ResultSet res = stmt.executeQuery("select * from User where username='"+ username+"'");
+      if(res.next()){
+        return null;
       }
-  
-      User user = new User();
-      user.setPassword(res.getString("password"));
-      user.setUsername(res.getString("username"));
-      user.setUuid(res.getInt("uuid"));
-      return user;
-    } catch(SQLException e){
-      throw e;
-    } catch (NoSuchAlgorithmException e){
-      throw e;
-    }
-  }
-
-  public User insert(User user) throws NoSuchAlgorithmException, SQLException {
-    try{
-      Statement stmt = con.createStatement();
-      stmt.executeUpdate("INSERT INTO User VALUES ('"+user.getUuid()+"','"+user.getUsername()+"','"+PasswordEncoder.encode(user.getPassword())+"')");
-  
-      return user;
+      else{
+        stmt.executeUpdate("INSERT INTO User (username,password) VALUES ('"+username+"','"+PasswordEncoder.encode(password)+"')");
+        res = stmt.executeQuery("Select max(uuid) from User");
+        User user = new User();
+        if(res.next()){
+          user.setUuid(res.getInt("max(uuid)"));
+          user.setUsername(username);
+        }
+        return user;
+      }
     }
     catch(SQLException e){
       throw e;

@@ -2,28 +2,42 @@ package app.Service;
 
 import java.io.IOException;
 import java.nio.channels.AsynchronousSocketChannel;
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
-import app.App;
-import app.Model.Liste;
+import app.Model.Message;
 import app.Model.Request;
 import app.Model.Response;
 import app.Model.Type;
+import app.Repository.MessageRepository;
 import app.Service.Interface.ServiceInterface;
 
 public class MessagingService implements ServiceInterface {
-
-  public void getAllUsers(Request req, Response res) throws IOException{
+  private MessageRepository messageRepository;
+  
+  public MessagingService(Connection con) throws ClassNotFoundException, SQLException{
+    messageRepository = new MessageRepository(con);
+  }
+  public void getAllMessages(Request req, Response res) throws SQLException{
+    List<Message> channels = messageRepository.findEveryMessage();
     res.setStatus(Type.OK);
-    List<String> list = new ArrayList<String>();
-    for(AsynchronousSocketChannel cli : App.clients){
-      list.add(cli.getRemoteAddress().toString());
+        res.setObj(channels);
+  }
+  public void sendMessage(Request req, Response res) throws SQLException{
+    String text = req.getParams().get("message");
+    int cuid = Integer.parseInt(req.getParams().get("cuid"));
+    int uuid = Integer.parseInt(req.getParams().get("uuid"));
+    if(text==null){
+      res.setStatus(Type.ERROR);
+      res.setObj("Il manque des informations, veuillez réessayer");
     }
-    Liste l = new Liste(list);
-    res.setObj(l);
-    res.setSendToAll(true);
-    res.setType(Type.GET_USERS);
+    else{
+      res.setStatus(Type.OK);
+      Message message = messageRepository.insert(cuid, uuid, text);
+      res.setObj(message);
+      res.setSendToAll(true);
+    }
   }
   public void echoMessage(Request req, Response res) throws IOException{
     res.setStatus(Type.OK);   
@@ -32,19 +46,19 @@ public class MessagingService implements ServiceInterface {
     res.setType(Type.ANY);   
   }
   public void run(Request req, Response res, AsynchronousSocketChannel client) 
-    throws IOException {
+    throws SQLException, IOException {
       switch(req.getType()){
         case ANY:
           System.out.println("On va lui renvoyer son message !");
           echoMessage(req, res);
           break;
         case CREATE_MESSAGE:
+          System.out.println("On envoie a tout le monde ce message !");
+          sendMessage(req, res);
           break;
         case GET_MESSAGES:
-          break;
-        case GET_USERS:
-          System.out.println("On va filer à tout le monde la liste des clients !");
-          getAllUsers(req, res);
+          System.out.println("On va lui filer tous les messages du serveur");
+          getAllMessages(req, res);
           break;
         default:
           break;

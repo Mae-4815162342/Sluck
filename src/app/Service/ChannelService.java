@@ -1,6 +1,7 @@
 package app.Service;
 
 import java.nio.channels.AsynchronousSocketChannel;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -14,27 +15,31 @@ import app.Service.Interface.ServiceInterface;
 public class ChannelService implements ServiceInterface {
   private ChannelRepository ChannelRepository;
 
-  public ChannelService() throws Exception{
+  public ChannelService(Connection con) throws Exception{
     try{
-      this.ChannelRepository = new ChannelRepository();
+      this.ChannelRepository = new ChannelRepository(con);
     }
     catch(SQLException e){
       throw e;
     }
   }
   public void createChannel(Request req, Response res) throws SQLException {
-    res.setStatus(Type.OK);
-    res.setType(req.getType());
+    System.out.println("Le client veut créer un channel !");
     String name = req.getParams().get("name");
     int adminUuid = Integer.parseInt(req.getParams().get("admin"));
-    Channel channel = ChannelRepository.insert(name, adminUuid);
-    res.setObj(channel);
-    res.setSendToAll(true);
+        if(name == ""){
+      res.setStatus(Type.ERROR);
+      res.setObj("Il manque des informations, veuillez réessayer");
+    }else{
+      res.setStatus(Type.OK);
+      Channel channel = ChannelRepository.insert(name, adminUuid);
+      res.setObj(channel);
+      res.setSendToAll(true);
+    }
   }
   public void getAllChannels(Request req, Response res) throws SQLException {
     res.setStatus(Type.OK);
-    res.setType(req.getType());
-    List<Channel> channels = ChannelRepository.findEveryChannel();
+        List<Channel> channels = ChannelRepository.findEveryChannel();
     res.setObj(channels);
   }
   public void run(Request req, Response res, AsynchronousSocketChannel client) throws SQLException {
@@ -48,6 +53,5 @@ public class ChannelService implements ServiceInterface {
       default:
         break;
     }
-  }
-  
+  } 
 }
