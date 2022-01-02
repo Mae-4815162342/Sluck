@@ -6,6 +6,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import client.*;
@@ -25,6 +26,7 @@ public class UserMain {
     private JScrollPane channelScroll;
     private JScrollPane userScroll;
     private JScrollPane messageScroll;
+    private JButton disconnectButton;
     private Channel currentChannel;
     private LocalSystem system = LocalSystem.getSystem();
 
@@ -81,7 +83,7 @@ public class UserMain {
                 CreateChannelPopup panel = new CreateChannelPopup();
                 popup.setContentPane(panel.getCreateChannelPanel());
                 popup.setTitle("Create my Channel !");
-                Image icon = Toolkit.getDefaultToolkit().getImage("GUI/src/icon.JPG");
+                Image icon = Toolkit.getDefaultToolkit().getImage("public/GUI/src/icon.JPG");
                 popup.setIconImage(icon);
                 popup.setSize(300, 200);
                 popup.setLocationRelativeTo(null);
@@ -92,6 +94,14 @@ public class UserMain {
                     exception.printStackTrace();
                 }
                 popup.setVisible(true);
+            }
+        });
+        disconnectButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                system.disconnect();
+                MainFrame main = MainFrame.getMainFrame();
+                main.goToMenu();
             }
         });
     }
@@ -109,8 +119,8 @@ public class UserMain {
 
     public void setChannelList() {
         DefaultListModel<String> channels = new DefaultListModel<>();
-        for(Channel chan: system.getChannels()) {
-                channels.addElement("  #" + chan.getName());
+        for (Channel chan : system.getChannels()) {
+            channels.addElement("  #" + chan.getName());
         }
         if(channels.isEmpty()) channels.addElement("    No channel found");
         channelList.setModel(channels);
@@ -125,24 +135,63 @@ public class UserMain {
         channelList.setModel(channels);
     }
 
-    public void setMessageList(String channel) {
+    public Channel getCurrentChannel() {
+        return currentChannel;
+    }
+
+    public void resetMessageList() {
+        System.out.println("entrée jpanel");
         DefaultListModel<String> messages = new DefaultListModel<>();
-        currentChannel = system.getChannel(channel);
-        if(currentChannel == null) messages.addElement("    Error when retrieving the channel, please try again. We apologise for the inconvenience");
-        else if(currentChannel.getMessages().size() == 0) messages.addElement("    No messages have been send yet !");
-        else {
-            for (Message mes : currentChannel.getMessages()) {
-                if(mes.getUser().getPseudo().equals(system.getCurrentUser().getPseudo())) {
+        for (Message mes : currentChannel.getMessages()) {
+            if(mes.getUser() != null){
+                if (mes.getUser().getPseudo().equals(system.getCurrentUser().getPseudo())) {
                     messages.addElement("me : " + mes.getContent());
                 } else {
                     messages.addElement(mes.getUser().getPseudo() + " : " + mes.getContent());
                 }
+            } else {
+                messages.addElement(mes.getUuid() + " : " + mes.getContent());
+            }
+        }
+        if(messages.isEmpty()) {
+            messages.addElement("    No messages have been send yet !");
+        }
+        TitledBorder title = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.white), currentChannel.getName());
+        title.setTitleColor(Color.white);
+        messageScroll.setBorder(title);
+        messageList.setModel(messages);
+    }
+
+    public void setMessageList(String channel) {
+        DefaultListModel<String> messages = new DefaultListModel<>();
+        currentChannel = system.getChannel(channel);
+        if(currentChannel == null) {
+            messages.addElement("    Error when retrieving the channel, please try again. We apologise for the inconvenience");
+        } else {
+            for (Message mes : currentChannel.getMessages()) {
+                if(mes.getUser() != null){
+                    if (mes.getUser().getPseudo().equals(system.getCurrentUser().getPseudo())) {
+                        messages.addElement("me : " + mes.getContent());
+                    } else {
+                        messages.addElement(mes.getUser().getPseudo() + " : " + mes.getContent());
+                    }
+                } else {
+                    messages.addElement(mes.getUuid() + " : " + mes.getContent());
+                }
+            }
+            if(messages.isEmpty()) {
+                messages.addElement("    No messages have been send yet !");
             }
         }
         TitledBorder title = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.white), channel);
         title.setTitleColor(Color.white);
         messageScroll.setBorder(title);
         messageList.setModel(messages);
+    }
+
+    public void setCurrentChannel(Channel currentChannel) {
+        this.currentChannel = currentChannel;
+        channelList.setSelectedIndex(channelList.getMaxSelectionIndex());
     }
 
     public JPanel getPanel() {

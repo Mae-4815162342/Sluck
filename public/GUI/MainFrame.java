@@ -5,6 +5,9 @@ import client.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.nio.charset.CharsetEncoder;
 
 public class MainFrame extends JFrame {
 
@@ -20,6 +23,9 @@ public class MainFrame extends JFrame {
     private JPanel userMainPanel = userMain.getPanel();
 
     private static MainFrame mainFrame;
+    private static boolean hasBeenInitialized = false;
+    private static boolean hasMessagesInitialized = false;
+    private static boolean hasChannelsInitialized = false;
 
     public static MainFrame getMainFrame() {
         if(mainFrame == null)
@@ -30,7 +36,7 @@ public class MainFrame extends JFrame {
     private MainFrame() {
         this.setContentPane(loadingPanel);
         this.setTitle("Sluck");
-        Image icon = Toolkit.getDefaultToolkit().getImage("GUI/src/icon.JPG");
+        Image icon = Toolkit.getDefaultToolkit().getImage("public/GUI/src/icon.JPG");
         this.setIconImage(icon);
         this.setSize(600, 600);
         this.setLocationRelativeTo(null);
@@ -41,6 +47,12 @@ public class MainFrame extends JFrame {
             e.printStackTrace();
         }
         this.setVisible(true);
+        addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent e){
+                LocalSystem system = LocalSystem.getSystem();
+                if(system.getCurrentUser() != null) system.disconnect();
+            }
+        });
     }
 
     public void goToMenu() {
@@ -49,29 +61,65 @@ public class MainFrame extends JFrame {
     }
 
     public void goToLogIn() {
+        LocalSystem system = LocalSystem.getSystem();
+        if(!hasBeenInitialized) {
+            system.updateUsers();
+            hasBeenInitialized = true;
+        }
         this.setContentPane(logInPanel);
         this.revalidate();
     }
 
     public void goToSignUp() {
+        LocalSystem system = LocalSystem.getSystem();
+        if(!hasBeenInitialized) {
+            system.updateUsers();
+            hasBeenInitialized = true;
+        }
         this.setContentPane(signUpPanel);
         this.revalidate();
     }
 
     public void goToUserMain() {
+        LocalSystem system = LocalSystem.getSystem();
+        if(!hasMessagesInitialized){
+            system.updateMessages();
+            hasMessagesInitialized = true;
+        }
+        if(!hasChannelsInitialized) {
+            system.updateChannels();
+            hasChannelsInitialized = true;
+        }
         userMain.setUserList();
         userMain.setChannelList();
         this.setContentPane(userMainPanel);
         this.revalidate();
     }
 
-    public void updateChannel(Channel channel) {
-        userMain.setMessageList(channel.getName());
+    public void updateChannelList() {
+        userMain.setChannelList();
+        userMainPanel.repaint();
         this.revalidate();
     }
 
-    public void updateChannelList() {
-        userMain.setChannelList();
+    public void updateUserList() {
+        userMain.setUserList();
+        userMainPanel.repaint();
+        this.revalidate();
+    }
+
+    public void updateMessageList() {
+        userMain.resetMessageList();
+        userMainPanel.repaint();
+        this.revalidate();
+    }
+
+    public Channel getCurrentChannel() {
+        return userMain.getCurrentChannel();
+    }
+
+    public void setCurrentChannel(Channel channel) {
+        userMain.setCurrentChannel(channel);
     }
 
     public static void main(String[] args) {

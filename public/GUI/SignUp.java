@@ -46,13 +46,13 @@ public class SignUp {
                     differentPasswordError.setVisible(true);
                 } else {
                     LocalSystem system = LocalSystem.getSystem();
-                    if(system.checkUserExistence(pseudo)) {
+                    boolean success = system.addUser(pseudo, password);
+                    if(success) {
+                        MainFrame main = MainFrame.getMainFrame();
+                        main.goToUserMain();
+                    } else {
                         pseudoError.setVisible(true);
-                        return;
                     }
-                    system.addUser(pseudo, password);
-                    MainFrame main = MainFrame.getMainFrame();
-                    main.goToUserMain();
                 }
             }
         });
