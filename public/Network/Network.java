@@ -1,88 +1,161 @@
 package Network;
+import GUI.UserMain;
 import client.*;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Network {
-    //données de test (à supprimer)
-    public static ArrayList<User> users = initUser();
-    public static ArrayList<Channel> channels = initChannel();
+    private static ArrayList<User> users = new ArrayList<>();
+    private static ArrayList<Channel> channels = new ArrayList<>();
+    private static  ArrayList<Message> messages = new ArrayList<>();
+
     public static LocalSystem system = LocalSystem.getSystem();
-
     public static Channel currentChannel = null;
+    public static User currentUser = null;
 
+    private static boolean usersRequestInProcess = false;
+    private static boolean channelsRequestInProcess = false;
+    private static boolean messagesRequestInProcess = false;
+    private static boolean signinRequestInProcess = false;
+    private static boolean signupRequestInProcess = false;
 
     public static void connexion() {
-        //établissement de la connexion avec le serveur
-        sleep(10);
+        Thread networkThread = new Thread() {
+            public void run() {
+                try {
+                    new UserConnection("").run();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        networkThread.start();
     }
 
-    public static ArrayList<User> initUser() {
-        //à supprimer à l'établissement de la connexion
-        ArrayList<User> res = new ArrayList<>();
+    public static void fetchUsers() {
         try {
-            res.add(new User("Winston", "1234"));
-            res.add(new User("Anto du 24", "1234"));
-            res.add(new User("Carla", "1234"));
-            res.add(new User("Amy", "1234"));
-            res.add(new User("JuliaTheBest", "1234"));
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+            UserConnection.sendRequest("get_users");
+        } catch (Exception e) {
+            if(system != null) { system.handleNetworkError(e); }
+            else {
+                e.printStackTrace();
+            }
         }
-        return res;
     }
 
-    public static ArrayList<Channel> initChannel() {
-        //à supprimer à l'établissement de la connexion
-        ArrayList<Channel> res = new ArrayList<>();
-        try {
-            User winston = new User("Winston", "1234");
-            User julia = new User("JuliaTheBest", "1234");
-            User amy = new User("Amy", "1234");
-            User carla = new User("Carla", "1234");
-            User anto = new User("Anto du 24", "1234");
-            Channel winstonChannel = new Channel("Winston'sChannel", winston);
-            Channel antoChannel = new Channel("AntoFaitDesVidéos", anto);
-            res.add(antoChannel);
-            res.add(winstonChannel);
-            res.add(new Channel("CatsAreNice", carla));
-            res.add(new Channel("YouHadOneJob", amy));
-            res.add(new Channel("Unexpected", julia));
-            antoChannel.addMessage(anto, "Yo everyone ! This is my new channel, where we can discuss about me");
-            antoChannel.addMessage(julia, "That's so great! I love what you do on Tutube!");
-            antoChannel.addMessage(anto, "Thank you for your support, it means a lot to me!");
-            antoChannel.addMessage(winston, "Guys, checkout my channel! it's Winston'sChannel!");
-            winstonChannel.addMessage(winston, "No one's here yet :,(");
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
+    public static void updateUserList(List<app.Model.User> user) {
+        users = new ArrayList<>();
+        for(app.Model.User u : user) {
+            System.out.println(user);
+            users.add(new User(u));
         }
-        return res;
+        setUsersRequestInProcess(false);
     }
 
-    public static ArrayList<User> fetchUsers() {
+    public static ArrayList<User> getUsers() {
         return users;
     }
 
-    public static ArrayList<Channel> fetchChannels() {
+    public static void setCurrentUser(app.Model.User user) {
+        if(user != null ) currentUser = new User(user);
+        else currentUser = null;
+        Network.setSigninRequestInProcess(false);
+        Network.setSignupRequestInProcess(false);
+    }
+
+    public static User getCurrentUser() {
+        return currentUser;
+    }
+
+    public static void fetchChannels() {
+        try {
+            UserConnection.sendRequest("get_channels");
+        } catch (Exception e) {
+            if(system != null) { system.handleNetworkError(e); }
+            else {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void updateChannelList(List<app.Model.Channel> channelList) {
+        channels = new ArrayList<>();
+        for(app.Model.Channel c : channelList) {
+            channels.add(new Channel(c));
+        }
+        setChannelsRequestInProcess(false);
+    }
+
+    public static ArrayList<Channel> getChannels() {
         return channels;
     }
 
-    public static  ArrayList<Message> fetchMessages() {
-        if(currentChannel != null) return currentChannel.getMessages();
-        return null;
+    public static void fetchMessages() {
+        messages = null;
+        try {
+            UserConnection.sendRequest("get_messages");
+        } catch (Exception e) {
+            if(system != null) { system.handleNetworkError(e); }
+            else {
+                e.printStackTrace();
+            }
+        }
     }
 
-    public static void updateUsers(User newUser) {
-        users.add(newUser);
+    public static void updateMessageList(List<app.Model.Message> messageList) {
+        messages = new ArrayList<>();
+        for(app.Model.Message m: messageList) {
+            messages.add(new Message(m));
+        }
+        setMessagesRequestInProcess(false);
     }
 
-    public static void notifyConnection(User user) {
-        System.out.println(user.getPseudo()+" is connected!");
+    public static ArrayList<Message> getMessages() {
+        return messages;
     }
 
-    public static Channel getCurrentChannel() {
-        return currentChannel;
+    public static void signup(String pseudo, String password) {
+        try {
+            UserConnection.sendRequest("signup " + pseudo + " " + password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void signin(String pseudo, String password) {
+        try {
+            UserConnection.sendRequest("signin " + pseudo + " " + password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void signout() {
+        try {
+            UserConnection.sendRequest("signout");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setSignout(app.Model.User user) {
+        User u = new User(user);
+        if(currentUser.equals(u)){
+            system.setCurrentUser(null);
+            setAllRequestError();
+        } else {
+            system.suppressUser(u);
+        }
+    }
+
+    public static void delete(Channel channel) {
+        //TO DO : connexion back
+    }
+
+    public static void receiveDelete() {
+
     }
 
     public static void setCurrentChannel(Channel channel) {
@@ -90,38 +163,83 @@ public class Network {
         currentChannel = channel;
     }
 
-    private static void sleep(int i) {
-        int res;
-        for(int j = 0; j < i * 1_000_000_000; j+=2)
-            res = 200000 *23456 ;
-            res = 200000 *23456 ;
-            res = 200000 *23456 ;
-            res = 200000 *23456 ;
-            res = 200000 *23456 ;
-            res = 200000 *23456 ;
-            res = 200000 *23456 ;
-            res = 200000 *23456 ;
-            res = 200000 *23456 ;
-            res = 200000 *23456 ;
-            res = 200000 *23456 ;
-            res = 200000 *23456 ;
-            res = 200000 *23456 ;
-            res = 200000 *23456 ;
-    }
-
-    public static void sendMessage(String message, Channel outChannel) {
+    public static void sendMessage(String message, Channel outChannel, User user) {
         if(outChannel.getName().equals(currentChannel.getName())) {
-            //notification de la base de données: envoie de /send *message*
-            System.out.println("Envoi de : /send " + message);
+            try {
+                UserConnection.sendRequest("create_message " + outChannel.getCuid() + " " + user.getUid() + " " + message);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        //en cas d'échec, gestion d'erreur avec un try/catch
     }
 
-    public static void sendChannelCreation(String channel) {
-        //notification de la base de données: envoie de /create *channel*
-        System.out.println("Envoi de : /create " + channel);
-        //en cas d'échec, gestion d'erreur avec un try/catch
+    public static void sendChannelCreation(String channel, User owner) {
+        try {
+            UserConnection.sendRequest("create_channel " + channel + " " + owner.getUid());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
+    public static void receiveChannel(app.Model.Channel channel) {
+        system.receiveNewChannel(new Channel(channel));
+    }
 
+    public static void receiveMessage(app.Model.Message message) {
+        system.receiveMessage(new Message(message));
+    }
+
+    public static void addUser(app.Model.User user) {
+        if( user != null ) {
+            system.receiveNewUser(new User(user));
+        }
+    }
+
+    public static void setUsersRequestInProcess(boolean usersRequestInProcess) {
+        Network.usersRequestInProcess = usersRequestInProcess;
+    }
+
+    public static void setChannelsRequestInProcess(boolean channelsRequestInProcess) {
+        Network.channelsRequestInProcess = channelsRequestInProcess;
+    }
+
+    public static void setMessagesRequestInProcess(boolean messagesRequestInProcess) {
+        Network.messagesRequestInProcess = messagesRequestInProcess;
+    }
+
+    public static boolean isUsersRequestInProcess() {
+        return usersRequestInProcess;
+    }
+
+    public static boolean isChannelsRequestInProcess() {
+        return channelsRequestInProcess;
+    }
+
+    public static boolean isMessagesRequestInProcess() {
+        return messagesRequestInProcess;
+    }
+
+    public static void setSigninRequestInProcess(boolean signinRequestInProcess) {
+        Network.signinRequestInProcess = signinRequestInProcess;
+    }
+
+    public static boolean isSigninRequestInProcess() {
+        return signinRequestInProcess;
+    }
+
+    public static void setSignupRequestInProcess(boolean signupRequestInProcess) {
+        Network.signupRequestInProcess = signupRequestInProcess;
+    }
+
+    public static boolean isSignupRequestInProcess() {
+        return signupRequestInProcess;
+    }
+
+    public static void setAllRequestError() {
+        setSignupRequestInProcess(false);
+        setSigninRequestInProcess(false);
+        setChannelsRequestInProcess(false);
+        setMessagesRequestInProcess(false);
+        setSignupRequestInProcess(false);
+    }
 }

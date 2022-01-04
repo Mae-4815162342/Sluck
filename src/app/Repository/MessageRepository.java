@@ -12,10 +12,13 @@ import app.Repository.Interface.RepositoryInterface;
 
 public class MessageRepository extends RepositoryInterface{
 
+  private static Connection con;
+
   public MessageRepository(Connection con) throws ClassNotFoundException, SQLException {
     super(con);
+    this.con = con;
   }
-  public Message insert (int cuid, int uuid, String text) throws SQLException{
+  public static Message insert (int cuid, int uuid, String text) throws SQLException{
     try{
       Statement stmt = con.createStatement();
       stmt.executeUpdate("INSERT INTO Message (text,uuid,cuid) VALUES ('"+text+"',"+uuid+","+cuid+")");
@@ -52,4 +55,5 @@ public class MessageRepository extends RepositoryInterface{
     }
     return messages;
   }
+
 }

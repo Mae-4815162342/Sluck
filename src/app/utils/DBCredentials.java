@@ -10,7 +10,7 @@ import java.util.Properties;
 public class DBCredentials {
   public static Map<String,String> getAccessToken(){
     Map<String, String> res = new HashMap<String, String>();
-      File configFile = new File("src/app/config.cnf");
+      File configFile = new File("app/config.cnf");
       try {
           InputStream configFileStream = new FileInputStream(configFile);
           Properties p = new Properties();

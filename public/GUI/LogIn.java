@@ -36,18 +36,20 @@ public class LogIn {
                 String pseudo = pseudoTextField.getText();
                 String password = new String(passwordTextField.getPassword());
                 LocalSystem system = LocalSystem.getSystem();
-                User user = system.getUser(pseudo);
-                if(user == null) {
+                if(pseudo.isBlank()) {
                     inexistantUserError.setVisible(true);
+                    return;
+                }
+                if(password.isBlank()) {
+                    wrongPasswordError.setVisible(true);
+                    return;
+                }
+                boolean success = system.connect(pseudo, password);
+                if(success) {
+                    MainFrame main = MainFrame.getMainFrame();
+                    main.goToUserMain();
                 } else {
-                    if(!user.getPassword().equals(password)) {
-                        wrongPasswordError.setVisible(true);
-                    } else {
-                        system = LocalSystem.getSystem();
-                        system.connect(user);
-                        MainFrame main = MainFrame.getMainFrame();
-                        main.goToUserMain();
-                    }
+                    inexistantUserError.setVisible(true);
                 }
             }
         });
@@ -60,18 +62,20 @@ public class LogIn {
                     String pseudo = pseudoTextField.getText();
                     String password = new String(passwordTextField.getPassword());
                     LocalSystem system = LocalSystem.getSystem();
-                    User user = system.getUser(pseudo);
-                    if (user == null) {
+                    boolean success = system.connect(pseudo, password);
+                    if(pseudo.isBlank()) {
                         inexistantUserError.setVisible(true);
+                        return;
+                    }
+                    if(password.isBlank()) {
+                        wrongPasswordError.setVisible(true);
+                        return;
+                    }
+                    if(success) {
+                        MainFrame main = MainFrame.getMainFrame();
+                        main.goToUserMain();
                     } else {
-                        if (!user.getPassword().equals(password)) {
-                            wrongPasswordError.setVisible(true);
-                        } else {
-                            system = LocalSystem.getSystem();
-                            system.connect(user);
-                            MainFrame main = MainFrame.getMainFrame();
-                            main.goToUserMain();
-                        }
+                        inexistantUserError.setVisible(true);
                     }
                 }
             }
