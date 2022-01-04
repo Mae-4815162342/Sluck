@@ -130,6 +130,7 @@ public class LocalSystem {
 
     public void sendMessage(String message, Channel outChannel) {
         Network.sendMessage(message, outChannel, currentUser);
+<<<<<<< HEAD
     }
 
     public void createChannel(String channelName) {
@@ -169,6 +170,55 @@ public class LocalSystem {
 
     public void suppressUser(User user) {
         MainFrame main = MainFrame.getMainFrame();
+=======
+    }
+
+    public void createChannel(String channelName) {
+        MainFrame main = MainFrame.getMainFrame();
+        Network.sendChannelCreation(channelName, currentUser);
+    }
+
+    public void deleteChannel(String channelName) {
+        Channel toDeleteChannel = getChannel(channelName);
+        if(toDeleteChannel != null) {
+            Network.delete(toDeleteChannel);
+        }
+    }
+
+    public void receiveMessage(Message message) {
+        Channel inChannel = getChannelById(message.getCuid());
+        if(inChannel == null) return;
+        inChannel.addMessage(message);
+        messages.add(message);
+        System.out.println(message);
+        System.out.println(inChannel);
+        MainFrame main = MainFrame.getMainFrame();
+        if(main.getCurrentChannel().getCuid() == inChannel.getCuid()){
+            System.out.println("Entrée if");
+            main.updateMessageList();
+        }
+    }
+
+    public void receiveNewChannel(Channel newChannel) {
+        MainFrame main = MainFrame.getMainFrame();
+        channels.add(newChannel);
+        newChannel.setMessages(getMessagesFor(newChannel.getCuid()));
+        if(newChannel.getOwnerUid() == currentUser.getUid()) {
+            main.setCurrentChannel(newChannel);
+        }
+        main.updateChannelList();
+        main.updateMessageList();
+    }
+
+    public void receiveNewUser(User user) {
+        MainFrame main = MainFrame.getMainFrame();
+        users.add(user);
+        main.updateUserList();
+    }
+
+    public void suppressUser(User user) {
+        MainFrame main = MainFrame.getMainFrame();
+>>>>>>> 637257c8c19db448a43bef82e3ef97b1e9fda296
         users.remove(user);
         main.updateUserList();
     }

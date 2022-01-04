@@ -110,6 +110,46 @@ public class Network {
             messages.add(new Message(m));
         }
         setMessagesRequestInProcess(false);
+<<<<<<< HEAD
+    }
+
+    public static ArrayList<Message> getMessages() {
+        return messages;
+    }
+
+    public static void signup(String pseudo, String password) {
+        try {
+            UserConnection.sendRequest("signup " + pseudo + " " + password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void signin(String pseudo, String password) {
+        try {
+            UserConnection.sendRequest("signin " + pseudo + " " + password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void signout() {
+        try {
+            UserConnection.sendRequest("signout");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setSignout(app.Model.User user) {
+        User u = new User(user);
+        if(currentUser.equals(u)){
+            system.setCurrentUser(null);
+            setAllRequestError();
+        } else {
+            system.suppressUser(u);
+        }
+=======
     }
 
     public static ArrayList<Message> getMessages() {
@@ -150,8 +190,13 @@ public class Network {
         }
     }
 
-    public static Channel getCurrentChannel() {
-        return currentChannel;
+    public static void delete(Channel channel) {
+        //TO DO : connexion back
+>>>>>>> 637257c8c19db448a43bef82e3ef97b1e9fda296
+    }
+
+    public static void receiveDelete() {
+
     }
 
     public static void setCurrentChannel(Channel channel) {
@@ -166,6 +211,7 @@ public class Network {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+<<<<<<< HEAD
         }
     }
 
@@ -199,6 +245,41 @@ public class Network {
         Network.channelsRequestInProcess = channelsRequestInProcess;
     }
 
+=======
+        }
+    }
+
+    public static void sendChannelCreation(String channel, User owner) {
+        try {
+            UserConnection.sendRequest("create_channel " + channel + " " + owner.getUid());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void receiveChannel(app.Model.Channel channel) {
+        system.receiveNewChannel(new Channel(channel));
+    }
+
+    public static void receiveMessage(app.Model.Message message) {
+        system.receiveMessage(new Message(message));
+    }
+
+    public static void addUser(app.Model.User user) {
+        if( user != null ) {
+            system.receiveNewUser(new User(user));
+        }
+    }
+
+    public static void setUsersRequestInProcess(boolean usersRequestInProcess) {
+        Network.usersRequestInProcess = usersRequestInProcess;
+    }
+
+    public static void setChannelsRequestInProcess(boolean channelsRequestInProcess) {
+        Network.channelsRequestInProcess = channelsRequestInProcess;
+    }
+
+>>>>>>> 637257c8c19db448a43bef82e3ef97b1e9fda296
     public static void setMessagesRequestInProcess(boolean messagesRequestInProcess) {
         Network.messagesRequestInProcess = messagesRequestInProcess;
     }

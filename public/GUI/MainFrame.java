@@ -38,14 +38,9 @@ public class MainFrame extends JFrame {
         this.setTitle("Sluck");
         Image icon = Toolkit.getDefaultToolkit().getImage("public/GUI/src/icon.JPG");
         this.setIconImage(icon);
-        this.setSize(600, 600);
+        this.setSize(700, 600);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         this.setVisible(true);
         addWindowListener(new WindowAdapter(){
             public void windowClosing(WindowEvent e){
@@ -98,13 +93,19 @@ public class MainFrame extends JFrame {
 
     public void updateChannelList() {
         userMain.setChannelList();
+<<<<<<< HEAD
         userMainPanel.repaint();
+=======
+>>>>>>> 637257c8c19db448a43bef82e3ef97b1e9fda296
         this.revalidate();
     }
 
     public void updateUserList() {
         userMain.setUserList();
+<<<<<<< HEAD
         userMainPanel.repaint();
+=======
+>>>>>>> 637257c8c19db448a43bef82e3ef97b1e9fda296
         this.revalidate();
     }
 
@@ -114,6 +115,13 @@ public class MainFrame extends JFrame {
         this.revalidate();
     }
 
+<<<<<<< HEAD
+=======
+    public UserMain getUserMain() {
+        return userMain;
+    }
+
+>>>>>>> 637257c8c19db448a43bef82e3ef97b1e9fda296
     public Channel getCurrentChannel() {
         return userMain.getCurrentChannel();
     }

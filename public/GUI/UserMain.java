@@ -27,21 +27,50 @@ public class UserMain {
     private JScrollPane userScroll;
     private JScrollPane messageScroll;
     private JButton disconnectButton;
+<<<<<<< HEAD
+=======
+    private JButton deleteChannelButton;
+    private JLabel deleteLabel;
+    private JLabel notYourChannelErrorLabel;
+>>>>>>> 637257c8c19db448a43bef82e3ef97b1e9fda296
     private Channel currentChannel;
     private LocalSystem system = LocalSystem.getSystem();
+    private boolean isDeleting = false;
 
     public UserMain() {
         DefaultListModel<String> messages = new DefaultListModel<>();
         messages.addElement("   Select a channel to start chatting !");
         messageList.setModel(messages);
+        deleteLabel.setVisible(false);
+        notYourChannelErrorLabel.setVisible(false);
         channelList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if(!e.getValueIsAdjusting()){
+                if(!e.getValueIsAdjusting()) {
                     String selected = (String) channelList.getSelectedValue();
                     selected = selected.split("#")[1];
                     System.out.println("Est selectionné " + selected);
-                    setMessageList(selected);
+                    if(isDeleting) {
+                        if(system.getChannel(selected).getOwnerUid() == system.getCurrentUser().getUid()) {
+                            JFrame popup = new JFrame();
+                            DeleteChannelPopup panel = new DeleteChannelPopup(selected);
+                            popup.setContentPane(panel.getDeletePanel());
+                            popup.setTitle("Delete " + selected + " ?");
+                            Image icon = Toolkit.getDefaultToolkit().getImage("public/GUI/src/icon.JPG");
+                            popup.setIconImage(icon);
+                            popup.setSize(300, 200);
+                            popup.setLocationRelativeTo(null);
+                            popup.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                            popup.setVisible(true);
+                            popup.addWindowListener(new WindowAdapter(){
+                                public void windowClosing(WindowEvent e){
+                                    isDeleting = false;
+                                }
+                            });
+                        }
+                    } else {
+                        setMessageList(selected);
+                    }
                 }
             }
         });
@@ -88,11 +117,6 @@ public class UserMain {
                 popup.setSize(300, 200);
                 popup.setLocationRelativeTo(null);
                 popup.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                try {
-                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                }
                 popup.setVisible(true);
             }
         });
@@ -104,6 +128,16 @@ public class UserMain {
                 main.goToMenu();
             }
         });
+<<<<<<< HEAD
+=======
+        deleteChannelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                isDeleting = ! isDeleting;
+                deleteLabel.setVisible(isDeleting);
+            }
+        });
+>>>>>>> 637257c8c19db448a43bef82e3ef97b1e9fda296
     }
 
     public void setUserList() {
@@ -140,6 +174,7 @@ public class UserMain {
     }
 
     public void resetMessageList() {
+<<<<<<< HEAD
         System.out.println("entrée jpanel");
         DefaultListModel<String> messages = new DefaultListModel<>();
         for (Message mes : currentChannel.getMessages()) {
@@ -160,6 +195,9 @@ public class UserMain {
         title.setTitleColor(Color.white);
         messageScroll.setBorder(title);
         messageList.setModel(messages);
+=======
+        setMessageList(currentChannel.getName());
+>>>>>>> 637257c8c19db448a43bef82e3ef97b1e9fda296
     }
 
     public void setMessageList(String channel) {
@@ -196,5 +234,10 @@ public class UserMain {
 
     public JPanel getPanel() {
         return userMainPanel;
+    }
+
+    public void setDeleting(boolean deleting) {
+        isDeleting = deleting;
+        deleteLabel.setVisible(false);
     }
 }
