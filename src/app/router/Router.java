@@ -40,6 +40,7 @@ public class Router {
     ChannelService channel = new ChannelService(con);
     services.put(Type.GET_CHANNELS,channel); //DONE
     services.put(Type.CREATE_CHANNEL, channel); //DONE
+    services.put(Type.DELETE_CHANNEL,channel);
 
     MessagingService message = new MessagingService(con);
     services.put(Type.GET_MESSAGES,message); //DONE

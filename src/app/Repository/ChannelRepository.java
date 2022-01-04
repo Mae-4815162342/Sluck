@@ -50,4 +50,20 @@ public class ChannelRepository extends RepositoryInterface{
     }
     return channels;
   }
+  public void delete(int cuid, int adminUuid) throws SQLException{
+    System.out.println("I am in delete() ");
+    try {
+      System.out.println("I am in delete() in try");
+      Statement stmt = con.createStatement();
+      ResultSet res = stmt.executeQuery("SELECT admin FROM Channel WHERE cuid='"+cuid+"'");
+      if(res.getInt("admin")!= adminUuid){
+        System.out.println("You don't have permission to perform this action");
+      }else{
+        stmt.executeUpdate("DELETE From Message WHERE channelId='"+cuid+"'");
+        stmt.executeUpdate("DELETE FROM Channel cuid='"+cuid+"'");
+      }
+    }catch(SQLException e){
+      throw e;
+    }
+  }
 }

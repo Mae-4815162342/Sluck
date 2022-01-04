@@ -86,6 +86,13 @@ public class Main {
         System.out.println("On veut les users");
         req.setType(Type.GET_USERS);
         break;
+      case "delete_channel":
+        System.out.println("On veut supprimer un channel.");
+        req.setType(Type.DELETE_CHANNEL);
+        params.put("cuid", command[1]);
+        params.put("admin", command[2]);
+        req.setParams(params);
+        break;
       default:
         req.setType(Type.ANY);
         params.put("message", String.join(" ", command));
@@ -157,6 +164,10 @@ public class Main {
           case SIGNUP:
             User newUser = (User) response.getObj();
             System.out.println("Bienvenue " + newUser.getUsername() + " !");
+            break;
+          case DELETE_CHANNEL:
+            Integer cuid = (Integer) response.getObj();
+            System.out.println("Deleted channel with id" + cuid);
             break;
           default:
             break; 
