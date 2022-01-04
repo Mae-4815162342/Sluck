@@ -86,6 +86,13 @@ public class UserConnection {
                 System.out.println("On veut les users");
                 req.setType(Type.GET_USERS);
                 break;
+            case "delete_channel":
+                System.out.println("On veut supprimer un channel.");
+                req.setType(Type.DELETE_CHANNEL);
+                params.put("cuid", command[1]);
+                params.put("admin", command[2]);
+                req.setParams(params);
+                break;
             default:
                 req.setType(Type.ANY);
                 params.put("message", String.join(" ", command));
@@ -152,6 +159,10 @@ public class UserConnection {
                 case SIGNOUT:
                     User disconnectedUser = (User) response.getObj();
                     Network.setSignout(disconnectedUser);
+                    break;
+                case DELETE_CHANNEL:
+                    int cuid = (int) response.getObj();
+                    Network.receiveDeleteChannel(cuid);
                     break;
                 default:
                     break;

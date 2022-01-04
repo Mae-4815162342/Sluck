@@ -34,7 +34,6 @@ public class MainFrame extends JFrame {
     }
 
     private MainFrame() {
-        this.setContentPane(loadingPanel);
         this.setTitle("Sluck");
         Image icon = Toolkit.getDefaultToolkit().getImage("public/GUI/src/icon.JPG");
         this.setIconImage(icon);
@@ -102,8 +101,7 @@ public class MainFrame extends JFrame {
     }
 
     public void updateMessageList() {
-        userMain.resetMessageList();
-        userMainPanel.repaint();
+        userMain.setMessageList(getCurrentChannel().getName());
         this.revalidate();
     }
 

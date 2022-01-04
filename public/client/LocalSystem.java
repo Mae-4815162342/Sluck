@@ -11,6 +11,7 @@ public class LocalSystem {
     private ArrayList<Message> messages;
     private User currentUser;
     private static LocalSystem system = new LocalSystem();
+    private static MainFrame main = MainFrame.getMainFrame();
 
     private LocalSystem() {
         users = null;
@@ -116,7 +117,6 @@ public class LocalSystem {
 
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
-        MainFrame main = MainFrame.getMainFrame();
         main.goToUserMain();
     }
 
@@ -128,20 +128,27 @@ public class LocalSystem {
         return channels;
     }
 
-    public void sendMessage(String message, Channel outChannel) {
-        Network.sendMessage(message, outChannel, currentUser);
-    }
-
-    public void createChannel(String channelName) {
-        MainFrame main = MainFrame.getMainFrame();
-        Network.sendChannelCreation(channelName, currentUser);
-    }
-
     public void deleteChannel(String channelName) {
         Channel toDeleteChannel = getChannel(channelName);
         if(toDeleteChannel != null) {
             Network.delete(toDeleteChannel);
         }
+    }
+
+    public void receiveDeleteChannel(int cuid) {
+        Channel deletedChannel = getChannelById(cuid);
+        if(deletedChannel != null) {
+            channels.remove(deletedChannel);
+        }
+        main.updateChannelList();
+    }
+
+    public void sendMessage(String message, Channel outChannel) {
+        Network.sendMessage(message, outChannel, currentUser);
+    }
+
+    public void createChannel(String channelName) {
+        Network.sendChannelCreation(channelName, currentUser);
     }
 
     public void receiveMessage(Message message) {
@@ -151,7 +158,6 @@ public class LocalSystem {
         messages.add(message);
         System.out.println(message);
         System.out.println(inChannel);
-        MainFrame main = MainFrame.getMainFrame();
         if(main.getCurrentChannel().getCuid() == inChannel.getCuid()){
             System.out.println("Entrée if");
             main.updateMessageList();
@@ -159,7 +165,6 @@ public class LocalSystem {
     }
 
     public void receiveNewChannel(Channel newChannel) {
-        MainFrame main = MainFrame.getMainFrame();
         channels.add(newChannel);
         newChannel.setMessages(getMessagesFor(newChannel.getCuid()));
         if(newChannel.getOwnerUid() == currentUser.getUid()) {
@@ -170,13 +175,11 @@ public class LocalSystem {
     }
 
     public void receiveNewUser(User user) {
-        MainFrame main = MainFrame.getMainFrame();
         users.add(user);
         main.updateUserList();
     }
 
     public void suppressUser(User user) {
-        MainFrame main = MainFrame.getMainFrame();
         users.remove(user);
         main.updateUserList();
     }

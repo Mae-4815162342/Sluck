@@ -48,7 +48,6 @@ public class Network {
     public static void updateUserList(List<app.Model.User> user) {
         users = new ArrayList<>();
         for(app.Model.User u : user) {
-            System.out.println(user);
             users.add(new User(u));
         }
         setUsersRequestInProcess(false);
@@ -151,11 +150,15 @@ public class Network {
     }
 
     public static void delete(Channel channel) {
-        //TO DO : connexion back
+        try {
+            UserConnection.sendRequest("delete_channel " + channel.getCuid() + " " + channel.getOwnerUid());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public static void receiveDelete() {
-
+    public static void receiveDeleteChannel(int cuid) {
+        system.receiveDeleteChannel(cuid);
     }
 
     public static void setCurrentChannel(Channel channel) {

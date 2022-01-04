@@ -34,7 +34,14 @@ public class UserMain {
     private LocalSystem system = LocalSystem.getSystem();
     private boolean isDeleting = false;
 
+    private DefaultListModel<String> channels = new DefaultListModel<>();
+    private DefaultListModel<String> users = new DefaultListModel<>();
+    private DefaultListModel<String> messages = new DefaultListModel<>();
+
     public UserMain() {
+        channelList.setModel(channels);
+        userList.setModel(users);
+        messageList.setModel(messages);
         DefaultListModel<String> messages = new DefaultListModel<>();
         messages.addElement("   Select a channel to start chatting !");
         messageList.setModel(messages);
@@ -135,18 +142,18 @@ public class UserMain {
     }
 
     public void setUserList() {
-        DefaultListModel<String> users = new DefaultListModel<>();
+        users.removeAllElements();
         for(User user: system.getUsers()) {
             if(!user.getPseudo().equals(system.getCurrentUser().getPseudo())) {
                 users.addElement("  " + user.getPseudo());
             }
         }
-        if(users.isEmpty()) users.addElement("  No user found");
+        if(users.isEmpty()) users.addElement("  No one else here");
         userList.setModel(users);
     }
 
     public void setChannelList() {
-        DefaultListModel<String> channels = new DefaultListModel<>();
+        channels.removeAllElements();
         for (Channel chan : system.getChannels()) {
             channels.addElement("  #" + chan.getName());
         }
@@ -155,7 +162,7 @@ public class UserMain {
     }
 
     public void setChannelListFiltered(String filter) {
-        DefaultListModel<String> channels = new DefaultListModel<>();
+        channels.removeAllElements();
         for(Channel chan: system.getChannels()) {
             if(chan.getName().toLowerCase(Locale.ROOT).contains(filter.toLowerCase(Locale.ROOT))) channels.addElement("  #" + chan.getName());
         }
@@ -167,25 +174,21 @@ public class UserMain {
         return currentChannel;
     }
 
-    public void resetMessageList() {
-        setMessageList(currentChannel.getName());
-    }
-
     public void setMessageList(String channel) {
-        DefaultListModel<String> messages = new DefaultListModel<>();
+        messages.removeAllElements();
         currentChannel = system.getChannel(channel);
         if(currentChannel == null) {
             messages.addElement("    Error when retrieving the channel, please try again. We apologise for the inconvenience");
         } else {
             for (Message mes : currentChannel.getMessages()) {
-                if(mes.getUser() != null){
-                    if (mes.getUser().getPseudo().equals(system.getCurrentUser().getPseudo())) {
-                        messages.addElement("me : " + mes.getContent());
-                    } else {
-                        messages.addElement(mes.getUser().getPseudo() + " : " + mes.getContent());
-                    }
+                if (mes.getUuid() == system.getCurrentUser().getUid()) {
+                    messages.addElement("me : " + mes.getContent());
                 } else {
-                    messages.addElement(mes.getUuid() + " : " + mes.getContent());
+                    if (mes.getUser() != null) {
+                        messages.addElement(mes.getUser().getPseudo() + " : " + mes.getContent());
+                    } else {
+                        messages.addElement(mes.getUuid() + " : " + mes.getContent());
+                    }
                 }
             }
             if(messages.isEmpty()) {
