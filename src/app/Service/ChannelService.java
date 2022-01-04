@@ -34,7 +34,7 @@ public class ChannelService implements ServiceInterface {
       res.setStatus(Type.OK);
       Channel channel = ChannelRepository.insert(name, adminUuid);
       res.setObj(channel);
-      res.setSendToAll(true);
+      res.setSendToAll(false);
     }
   }
   public void getAllChannels(Request req, Response res) throws SQLException {
@@ -44,16 +44,16 @@ public class ChannelService implements ServiceInterface {
   }
   public void deleteChannel(Request req, Response res) throws SQLException {
     System.out.println("Le client veut supprimer un channel.");
-    Integer cuid = Integer.parseInt(req.getParams().get("cuid"));
+    int cuid = Integer.parseInt(req.getParams().get("cuid"));
     int adminUuid = Integer.parseInt(req.getParams().get("admin"));
-    if(cuid == null){
-      res.setStatus(Type.ERROR);
-      res.setObj("Il manque des informations, veuillez réessayer");
-    }else{
+    boolean deleted = ChannelRepository.delete(cuid, adminUuid);  
+    if(deleted){
       res.setStatus(Type.OK);
-      ChannelRepository.delete(cuid, adminUuid);
       res.setObj(cuid);
       res.setSendToAll(true);
+    }else{
+      res.setStatus(Type.ERROR);
+      res.setObj("Il manque des informations, veuillez réessayer");
     }
   }
   public void run(Request req, Response res, AsynchronousSocketChannel client) throws SQLException {
@@ -65,7 +65,6 @@ public class ChannelService implements ServiceInterface {
         getAllChannels(req, res);
         break;
       case DELETE_CHANNEL:
-        System.out.println("switch");
         deleteChannel(req, res);
         break;
       default:

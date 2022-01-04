@@ -33,10 +33,13 @@ public class App implements Callable<Boolean> {
 		InterruptedException, ExecutionException, IOException, SQLException, NoSuchAlgorithmException{
 			res.setType(req.getType());
 			router.run(req, res, client);
+			System.out.println("Infos Response : " + res.getStatus() + ", "+ res.getType());
 			if(res.isSendToAll()){
+				System.out.println("On envoit aux clicos");
 				sendToAll(res);
 			}
 			else{
+				System.out.println("On envoit qu'à lui !");
 				sendToOneClient(res, client);
 			}
 	}

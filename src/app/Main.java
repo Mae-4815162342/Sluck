@@ -14,7 +14,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import app.Model.Channel;
-import app.Model.Liste;
 import app.Model.Message;
 import app.Model.Request;
 import app.Model.Response;
@@ -32,6 +31,7 @@ public class Main {
     InterruptedException, ExecutionException, ClassNotFoundException, IOException{
     while(true){
       ByteBuffer buffer = ByteBuffer.allocate(1024);
+      System.out.println("Nouvelle réponse !");
       socket.read(buffer).get();
       handleResponse(buffer);
     }
@@ -115,6 +115,7 @@ public class Main {
   public void handleResponse(ByteBuffer buffer) throws 
     ClassNotFoundException, IOException{
       Response response = SerializationUtils.deserializeResponse(buffer.flip().array());
+      System.out.println(response.getType());
       if(response.getStatus().equals(Type.OK)){
         switch(response.getType()){
           case ANY:
@@ -166,7 +167,7 @@ public class Main {
             System.out.println("Bienvenue " + newUser.getUsername() + " !");
             break;
           case DELETE_CHANNEL:
-            Integer cuid = (Integer) response.getObj();
+            int cuid = (int) response.getObj();
             System.out.println("Deleted channel with id" + cuid);
             break;
           default:
