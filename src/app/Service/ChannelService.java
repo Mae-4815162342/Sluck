@@ -34,7 +34,7 @@ public class ChannelService implements ServiceInterface {
       res.setStatus(Type.OK);
       Channel channel = ChannelRepository.insert(name, adminUuid);
       res.setObj(channel);
-      res.setSendToAll(false);
+      res.setSendToAll(true);
     }
   }
   public void getAllChannels(Request req, Response res) throws SQLException {

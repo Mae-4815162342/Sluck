@@ -5,14 +5,18 @@ import java.io.Serializable;
 public class Message implements Serializable{
     private int muid;
     private String message;
-    private int uuid;
+    private String username;
     private int cuid;
 
-    public Message(){
+    public String getUsername() {
+        return username;
     }
 
-    public int getUuid(){
-        return uuid;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Message(){
     }
 
     public int getMuid() {
@@ -25,10 +29,6 @@ public class Message implements Serializable{
 
     public String getMessage() {
         return message;
-    }
-
-    public void setUuid(int uuid) {
-        this.uuid = uuid;
     }
 
     public int getCuid() {
@@ -44,6 +44,6 @@ public class Message implements Serializable{
         this.message = message;
     }
     public String toString(){
-        return "From : "+uuid + " in " + cuid + ", " + message;
+        return "From : "+ username + " in " + cuid + ", " + message;
     }
 }

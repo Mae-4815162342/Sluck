@@ -1,9 +1,6 @@
 package app.Repository;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,23 +9,21 @@ import app.Repository.Interface.RepositoryInterface;
 
 public class MessageRepository extends RepositoryInterface{
 
-  private static Connection con;
-
   public MessageRepository(Connection con) throws ClassNotFoundException, SQLException {
     super(con);
-    this.con = con;
   }
-  public static Message insert (int cuid, int uuid, String text) throws SQLException{
+  public Message insert (int cuid, String username, String text) throws SQLException{
     try{
       Statement stmt = con.createStatement();
-      stmt.executeUpdate("INSERT INTO Message (text,uuid,cuid) VALUES ('"+text+"',"+uuid+","+cuid+")");
+      String modifiedText = text.replaceAll("'", "''");
+      stmt.executeUpdate("INSERT INTO Message (text, username, cuid) VALUES ('"+modifiedText+"','"+username+"',"+cuid+")");
       ResultSet res = stmt.executeQuery("Select max(muid) from Message");
       Message message = new Message();
       if(res.next()){
-        message.setUuid(uuid);
         message.setMessage(text);
         message.setMuid(res.getInt("MAX(muid)"));
         message.setCuid(cuid);
+        message.setUsername(username);
       }
       return message;
     }
@@ -40,12 +35,12 @@ public class MessageRepository extends RepositoryInterface{
     List<Message> messages = new ArrayList<Message>();
     try{
       Statement stmt = con.createStatement();
-      ResultSet res = stmt.executeQuery("select * from Message");
+      ResultSet res = stmt.executeQuery("SELECT * from Message");
       while(res.next()){
         Message m = new Message();
         m.setCuid(res.getInt("cuid"));
-        m.setUuid(res.getInt("uuid"));
         m.setMuid(res.getInt("muid"));
+        m.setUsername(res.getString("username"));
         m.setMessage(res.getString("text"));
         messages.add(m);
       }

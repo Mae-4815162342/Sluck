@@ -27,14 +27,14 @@ public class MessagingService implements ServiceInterface {
   public void sendMessage(Request req, Response res) throws SQLException{
     String text = req.getParams().get("message");
     int cuid = Integer.parseInt(req.getParams().get("cuid"));
-    int uuid = Integer.parseInt(req.getParams().get("uuid"));
+    String username = req.getParams().get("username");
     if(text==null){
       res.setStatus(Type.ERROR);
       res.setObj("Il manque des informations, veuillez réessayer");
     }
     else{
       res.setStatus(Type.OK);
-      Message message = messageRepository.insert(cuid, uuid, text);
+      Message message = messageRepository.insert(cuid, username, text);
       res.setObj(message);
       res.setSendToAll(true);
     }

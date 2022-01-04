@@ -61,6 +61,7 @@ public class UserConnection {
                 break;
             case "create_channel":
                 System.out.println("On veut créer un channel !");
+                System.out.println(line);
                 req.setType(Type.CREATE_CHANNEL);
                 params.put("name", command[1]);
                 params.put("admin", command[2]);
@@ -71,7 +72,7 @@ public class UserConnection {
                 req.setType(Type.CREATE_MESSAGE);
                 params.put("message", String.join(" ",Arrays.copyOfRange(command, 3, command.length)));
                 params.put("cuid", command[1]);
-                params.put("uuid", command[2]);
+                params.put("username", command[2]);
                 req.setParams(params);
                 break;
             case "get_channels":
@@ -129,7 +130,7 @@ public class UserConnection {
                     break;
                 case CREATE_CHANNEL:
                     Channel newChannel = (Channel) response.getObj();
-                    System.out.println(newChannel);
+                    System.out.println("Création de " + newChannel.getName() + "(" + newChannel.getCuid() + ")");
                     Network.receiveChannel(newChannel);
                     break;
                 case GET_CHANNELS:
@@ -142,6 +143,7 @@ public class UserConnection {
                     break;
                 case CREATE_MESSAGE:
                     Message message = (Message) response.getObj();
+                    System.out.println(message.getUsername() + " " + message.getMessage() + " " + message.getCuid());
                     Network.receiveMessage(message);
                     break;
                 case GET_MESSAGES:
@@ -151,6 +153,7 @@ public class UserConnection {
                 case SIGNIN:
                 case SIGNUP:
                     User user = (User) response.getObj();
+                    System.out.println("Connexion de " + user.getUsername());
                     if((Network.isSigninRequestInProcess() || Network.isSignupRequestInProcess()))
                         Network.setCurrentUser(user);
                     else
@@ -158,16 +161,19 @@ public class UserConnection {
                     break;
                 case SIGNOUT:
                     User disconnectedUser = (User) response.getObj();
+                    System.out.println("Déconnexion de " + disconnectedUser.getUsername());
                     Network.setSignout(disconnectedUser);
                     break;
                 case DELETE_CHANNEL:
                     int cuid = (int) response.getObj();
+                    System.out.println("Suppression de " + cuid);
                     Network.receiveDeleteChannel(cuid);
                     break;
                 default:
                     break;
             }
         } else {
+            System.out.println("Erreur");
             Network.setAllRequestError();
         }
     }

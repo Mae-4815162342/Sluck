@@ -4,7 +4,7 @@ public class Message {
     private User user;
     private String content;
     private int muid;
-    private int uuid;
+    private String username;
     private int cuid;
 
     public Message(User user, String content) {
@@ -13,11 +13,9 @@ public class Message {
     }
 
     public Message(app.Model.Message message) {
-        this.uuid = message.getUuid();
+        this.username = message.getUsername();
         this.muid = message.getMuid();
         this.cuid = message.getCuid();
-        LocalSystem system = LocalSystem.getSystem();
-        this.user = system.getUserById(uuid);
         this.content = message.getMessage();
     }
 
@@ -25,16 +23,11 @@ public class Message {
         return content;
     }
 
-    public User getUser() {
-        LocalSystem system = LocalSystem.getSystem();
-        return user = system.getUserById(uuid);
-    }
-
     public int getCuid() {
         return cuid;
     }
 
-    public int getUuid() {
-        return uuid;
+    public String getUsername() {
+        return username;
     }
 }
