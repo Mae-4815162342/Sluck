@@ -9,10 +9,10 @@ db_username=kxw4yyXXXXXX
 db_url=jdbc:mysql://ZZZZZZ.eu-west-3.psdb.cloud/sluck?sslMode=VERIFY_IDENTITY
 db_password=pscale_pw_FgvuMMBjEhEfxNhiWKRVpYYYYYY
 ```
-**Remplacer les placeholders par les bons champs : 
-XXXXXX : vi45mm
-YYYYYY : Tc71BPFrGJFhKB-9Adqy2w
-ZZZZZZ : gcvfvf8qih2d** 
+**Remplacer les placeholders par les bons champs :**
+- XXXXXX : vi45mm
+- YYYYYY : Tc71BPFrGJFhKB-9Adqy2w
+- ZZZZZZ : gcvfvf8qih2d 
 
 Pour lancer le serveur:
 Lancer l'exécution du main de la classe App dans ./src/app/ (IDE côté Back).
