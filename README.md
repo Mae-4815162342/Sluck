@@ -1,39 +1,26 @@
-###Sluck
+Lancement de Sluck:
 
-Slack for SU
+Lancer le projet sous Intellij: ouvrir dans une fenêtre le projet à la racine (côté Front), dans une autre le projet à la racine du serveur ./src (côté Back) où on ajoute au classpath le sql connector ( mysql:mysql-connector-java:8.0.11 )
 
-[Interface](https://picocli.info/)
+Dans src/app, ajouter un fichier *config.cnf* contenant les lignes suivantes:
 
-Format des requêtes client par fonctionnalité:
+```
+db_username=yhgbjkdx1j8q
+db_url=jdbc:mysql://gcvfvf8qih2d.eu-west-3.psdb.cloud/sluck?sslMode=VERIFY_IDENTITY
+db_password=pscale_pw_qGWPBQCp3LTT9tSu7Z7zNQ9MOSHL7Gb3zeYURMz82cw
+```
 
->Connexion:
-    ```signin #pseudo #password```
-> 
->*connecte l'utilisateur si il existe et que le mot de passe est correct*
-> 
->*si l'utilisateur n'existe pas, le crée*
->
->*si le mot de passe est incorrect, retourne une erreur*
+Pour lancer le serveur:
+Lancer l'exécution du main de la classe App dans ./src/app/ (IDE côté Back).
+Vous disposez également dans ce package d'une classe Main qui permet de lancer un utilisateur uniquement en lignes de code.
 
->Créer un channel:
-```create_channel #channelName #userId```
-> 
-> *si le channel n'existe pas, le crée avec l'utilisateur en propriétaire*
-> 
-> *si il existe, erreur*
+Pour lancer les clients:
+Dans l'IDE côté Front : configurer la classe MainFrame dans ./public/GUI de sorte à pouvoir lancer plusieurs instances simultanément (Allow Multiple Instances)
+Lancer ensuite l'éxécution pour ouvrir la page de Sluck pour un client
 
->Envoyer un message:
-> ```create_message #userName #channelId #message```
-> 
-> *envoie un message de la part de l'utilisateur dans le channel où il est connecté*
-> 
-> */!\ il faudra également renvoyer le message à tous les utilisateurs connectés dans le channel en question*
-
->Se déconnecter d'un channel
-> ```signout```
-> 
-> *déconnecte l'utilisateur du channel courant*
-
->Supprimer un channel
-> ```delete_channel #channelName```
-> *supprime le channel si l'utilisateur n'y est pas connecté et en est le propriétaire*
+Annexe: commandes client via Main
+- Connexion:        signin #pseudo #password
+- Créer un channel:     create_channel #channelName #userId
+- Envoyer un message:   create_message #userName #channelId #message
+- Se déconnecter:    signout
+- Supprimer un channel:     delete_channel #channelName
