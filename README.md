@@ -5,10 +5,14 @@ Lancer le projet sous Intellij: ouvrir dans une fenêtre le projet à la racine 
 Dans src/app, ajouter un fichier *config.cnf* contenant les lignes suivantes:
 
 ```
-db_username=yhgbjkdx1j8q
-db_url=jdbc:mysql://gcvfvf8qih2d.eu-west-3.psdb.cloud/sluck?sslMode=VERIFY_IDENTITY
-db_password=pscale_pw_qGWPBQCp3LTT9tSu7Z7zNQ9MOSHL7Gb3zeYURMz82cw
+db_username=kxw4yyXXXXXX
+db_url=jdbc:mysql://ZZZZZZ.eu-west-3.psdb.cloud/sluck?sslMode=VERIFY_IDENTITY
+db_password=pscale_pw_FgvuMMBjEhEfxNhiWKRVpYYYYYY
 ```
+**Remplacer les placeholders par les bons champs : 
+XXXXXX : vi45mm
+YYYYYY : Tc71BPFrGJFhKB-9Adqy2w
+ZZZZZZ : gcvfvf8qih2d** 
 
 Pour lancer le serveur:
 Lancer l'exécution du main de la classe App dans ./src/app/ (IDE côté Back).
