@@ -34,24 +34,29 @@ public class MainFrame extends JFrame {
     }
 
     private MainFrame() {
+        this.setContentPane(loadingPanel);
         this.setTitle("Sluck");
         Image icon = Toolkit.getDefaultToolkit().getImage("public/GUI/src/icon.JPG");
         this.setIconImage(icon);
         this.setSize(700, 600);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setVisible(true);
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         addWindowListener(new WindowAdapter(){
             public void windowClosing(WindowEvent e){
                 LocalSystem system = LocalSystem.getSystem();
                 if(system.getCurrentUser() != null) system.disconnect();
             }
         });
+        this.setVisible(true);
     }
 
     public void goToMenu() {
         this.setContentPane(connexionMenuPanel);
-        this.revalidate();
     }
 
     public void goToLogIn() {
@@ -88,21 +93,19 @@ public class MainFrame extends JFrame {
         userMain.setChannelList();
         this.setContentPane(userMainPanel);
         this.revalidate();
+        this.repaint();
     }
 
     public void updateChannelList() {
         userMain.setChannelList();
-        this.revalidate();
     }
 
     public void updateUserList() {
         userMain.setUserList();
-        this.revalidate();
     }
 
     public void updateMessageList() {
         userMain.setMessageList(getCurrentChannel().getName());
-        this.revalidate();
     }
 
     public UserMain getUserMain() {

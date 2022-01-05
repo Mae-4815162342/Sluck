@@ -17,8 +17,6 @@ public class Channel {
     public Channel(app.Model.Channel channel) {
         this.cuid = channel.getCuid();
         this.ownerUid = channel.getAdminUuid();
-        LocalSystem system = LocalSystem.getSystem();
-        this.owner = system.getUserById(this.ownerUid);
         this.name = channel.getName();
     }
 

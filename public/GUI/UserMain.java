@@ -30,18 +30,11 @@ public class UserMain {
     private JButton deleteChannelButton;
     private JLabel deleteLabel;
     private JLabel notYourChannelErrorLabel;
-    private Channel currentChannel;
+    private static Channel currentChannel;
     private LocalSystem system = LocalSystem.getSystem();
     private boolean isDeleting = false;
 
-    private DefaultListModel<String> channels = new DefaultListModel<>();
-    private DefaultListModel<String> users = new DefaultListModel<>();
-    private DefaultListModel<String> messages = new DefaultListModel<>();
-
     public UserMain() {
-        channelList.setModel(channels);
-        userList.setModel(users);
-        messageList.setModel(messages);
         DefaultListModel<String> messages = new DefaultListModel<>();
         messages.addElement("   Select a channel to start chatting !");
         messageList.setModel(messages);
@@ -51,7 +44,9 @@ public class UserMain {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if(!e.getValueIsAdjusting()) {
+                    notYourChannelErrorLabel.setVisible(false);
                     String selected = (String) channelList.getSelectedValue();
+                    if(selected.isBlank()) return;
                     selected = selected.split("#")[1];
                     System.out.println("Est selectionné " + selected);
                     if(isDeleting) {
@@ -65,12 +60,19 @@ public class UserMain {
                             popup.setSize(300, 200);
                             popup.setLocationRelativeTo(null);
                             popup.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                            try {
+                                UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+                            } catch (Exception exception) {
+                                exception.printStackTrace();
+                            }
                             popup.setVisible(true);
                             popup.addWindowListener(new WindowAdapter(){
                                 public void windowClosing(WindowEvent e){
                                     isDeleting = false;
                                 }
                             });
+                        } else {
+                            notYourChannelErrorLabel.setVisible(true);
                         }
                     } else {
                         setMessageList(selected);
@@ -121,6 +123,11 @@ public class UserMain {
                 popup.setSize(300, 200);
                 popup.setLocationRelativeTo(null);
                 popup.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                try {
+                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
                 popup.setVisible(true);
             }
         });
@@ -142,7 +149,7 @@ public class UserMain {
     }
 
     public void setUserList() {
-        users.removeAllElements();
+        DefaultListModel<String> users = new DefaultListModel<>();
         for(User user: system.getUsers()) {
             if(!user.getPseudo().equals(system.getCurrentUser().getPseudo())) {
                 users.addElement("  " + user.getPseudo());
@@ -153,7 +160,7 @@ public class UserMain {
     }
 
     public void setChannelList() {
-        channels.removeAllElements();
+        DefaultListModel<String> channels = new DefaultListModel<>();
         for (Channel chan : system.getChannels()) {
             channels.addElement("  #" + chan.getName());
         }
@@ -162,7 +169,7 @@ public class UserMain {
     }
 
     public void setChannelListFiltered(String filter) {
-        channels.removeAllElements();
+        DefaultListModel<String> channels = new DefaultListModel<>();
         for(Channel chan: system.getChannels()) {
             if(chan.getName().toLowerCase(Locale.ROOT).contains(filter.toLowerCase(Locale.ROOT))) channels.addElement("  #" + chan.getName());
         }
@@ -175,20 +182,16 @@ public class UserMain {
     }
 
     public void setMessageList(String channel) {
-        messages.removeAllElements();
+        DefaultListModel<String> messages = new DefaultListModel<>();
         currentChannel = system.getChannel(channel);
         if(currentChannel == null) {
             messages.addElement("    Error when retrieving the channel, please try again. We apologise for the inconvenience");
         } else {
             for (Message mes : currentChannel.getMessages()) {
-                if (mes.getUuid() == system.getCurrentUser().getUid()) {
+                if (mes.getUsername().equals(system.getCurrentUser().getPseudo())) {
                     messages.addElement("me : " + mes.getContent());
                 } else {
-                    if (mes.getUser() != null) {
-                        messages.addElement(mes.getUser().getPseudo() + " : " + mes.getContent());
-                    } else {
-                        messages.addElement(mes.getUuid() + " : " + mes.getContent());
-                    }
+                    messages.addElement(mes.getUsername() + " : " + mes.getContent());
                 }
             }
             if(messages.isEmpty()) {

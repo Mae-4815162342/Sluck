@@ -11,7 +11,6 @@ public class LocalSystem {
     private ArrayList<Message> messages;
     private User currentUser;
     private static LocalSystem system = new LocalSystem();
-    private static MainFrame main = MainFrame.getMainFrame();
 
     private LocalSystem() {
         users = null;
@@ -117,6 +116,7 @@ public class LocalSystem {
 
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
+        MainFrame main = MainFrame.getMainFrame();
         main.goToUserMain();
     }
 
@@ -140,6 +140,7 @@ public class LocalSystem {
         if(deletedChannel != null) {
             channels.remove(deletedChannel);
         }
+        MainFrame main = MainFrame.getMainFrame();
         main.updateChannelList();
     }
 
@@ -152,34 +153,33 @@ public class LocalSystem {
     }
 
     public void receiveMessage(Message message) {
+        MainFrame main = MainFrame.getMainFrame();
         Channel inChannel = getChannelById(message.getCuid());
         if(inChannel == null) return;
         inChannel.addMessage(message);
         messages.add(message);
-        System.out.println(message);
-        System.out.println(inChannel);
         if(main.getCurrentChannel().getCuid() == inChannel.getCuid()){
-            System.out.println("Entrée if");
             main.updateMessageList();
         }
     }
 
     public void receiveNewChannel(Channel newChannel) {
+        MainFrame main = MainFrame.getMainFrame();
         channels.add(newChannel);
-        newChannel.setMessages(getMessagesFor(newChannel.getCuid()));
-        if(newChannel.getOwnerUid() == currentUser.getUid()) {
-            main.setCurrentChannel(newChannel);
-        }
+        newChannel.setMessages(new ArrayList<>());
+        System.out.println(newChannel.getCuid());
+        System.out.println(newChannel.getMessages());
         main.updateChannelList();
-        main.updateMessageList();
     }
 
     public void receiveNewUser(User user) {
+        MainFrame main = MainFrame.getMainFrame();
         users.add(user);
         main.updateUserList();
     }
 
     public void suppressUser(User user) {
+        MainFrame main = MainFrame.getMainFrame();
         users.remove(user);
         main.updateUserList();
     }

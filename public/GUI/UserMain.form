@@ -22,8 +22,13 @@
             <constraints/>
             <properties>
               <background color="-16777216"/>
+              <dropMode value="USE_SELECTION"/>
               <foreground color="-1"/>
+              <layoutOrientation value="0"/>
               <model/>
+              <valueIsAdjusting value="true"/>
+              <verifyInputWhenFocusTarget value="true"/>
+              <visibleRowCount value="8"/>
             </properties>
           </component>
         </children>
@@ -49,12 +54,16 @@
             <constraints/>
             <properties>
               <background color="-14012881"/>
+              <enabled value="true"/>
               <foreground color="-1"/>
               <inheritsPopupMenu value="false"/>
+              <layoutOrientation value="0"/>
               <maximumSize width="0" height="0"/>
               <model/>
               <preferredSize width="0" height="0"/>
               <valueIsAdjusting value="true"/>
+              <verifyInputWhenFocusTarget value="true"/>
+              <visibleRowCount value="8"/>
             </properties>
           </component>
         </children>
@@ -72,6 +81,9 @@
               <background color="-16777216"/>
               <enabled value="true"/>
               <foreground color="-1182465"/>
+              <layoutOrientation value="0"/>
+              <valueIsAdjusting value="true"/>
+              <verifyInputWhenFocusTarget value="true"/>
             </properties>
           </component>
         </children>

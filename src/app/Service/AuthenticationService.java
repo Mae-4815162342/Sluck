@@ -100,6 +100,7 @@ public class AuthenticationService implements ServiceInterface {
       System.out.println(cli.getRemoteAddress());
     }
     res.setStatus(Type.OK);
+    res.setSendToAll(true);
       }
   public void run(Request req, Response res, AsynchronousSocketChannel client) throws IOException, NoSuchAlgorithmException, SQLException {
     switch(req.getType()){

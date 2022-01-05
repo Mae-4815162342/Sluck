@@ -169,7 +169,7 @@ public class Network {
     public static void sendMessage(String message, Channel outChannel, User user) {
         if(outChannel.getName().equals(currentChannel.getName())) {
             try {
-                UserConnection.sendRequest("create_message " + outChannel.getCuid() + " " + user.getUid() + " " + message);
+                UserConnection.sendRequest("create_message " + outChannel.getCuid() + " " + user.getPseudo() + " " + message);
             } catch (Exception e) {
                 e.printStackTrace();
             }

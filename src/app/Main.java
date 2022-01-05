@@ -70,8 +70,8 @@ public class Main {
         System.out.println("On veut envoyer un message !");
         req.setType(Type.CREATE_MESSAGE);
         params.put("message", String.join(" ",Arrays.copyOfRange(command, 3, command.length)));
-        params.put("cuid", command[1]);     
-        params.put("uuid", command[2]);     
+        params.put("username", command[1]);
+        params.put("cuid", command[2]);
         req.setParams(params);
         break;   
       case "get_channels":
@@ -173,6 +173,8 @@ public class Main {
           default:
             break; 
         }
+      } else {
+        System.out.println("Erreur");
       }
   }
   public void sendDisconnectRequest(AsynchronousSocketChannel socket) throws 
