@@ -123,8 +123,8 @@ public class MainFrame extends JFrame {
     public static void main(String[] args) {
         try {
             mainFrame = new MainFrame();
-            Network.connexion();
             mainFrame.goToMenu();
+            Network.connexion();
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Zut alors ça marche pas");
